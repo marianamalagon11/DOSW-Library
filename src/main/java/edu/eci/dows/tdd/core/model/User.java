@@ -1,4 +1,4 @@
-package edu.eci.dows.tdd.model;
+package edu.eci.dows.tdd.core.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
