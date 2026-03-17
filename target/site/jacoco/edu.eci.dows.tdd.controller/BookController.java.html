@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BookController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">DOSW-Library</a> &gt; <a href="index.source.html" class="el_package">edu.eci.dows.tdd.controller</a> &gt; <span class="el_source">BookController.java</span></div><h1>BookController.java</h1><pre class="source lang-java linenums">package edu.eci.dows.tdd.controller;
+
+import edu.eci.dows.tdd.controller.dto.BookDTO;
+import edu.eci.dows.tdd.controller.mapper.BookMapper;
+import edu.eci.dows.tdd.core.service.BookService;
+import edu.eci.dows.tdd.core.model.Book;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/books&quot;)
+<span class="fc" id="L16">@RequiredArgsConstructor</span>
+public class BookController {
+
+    private final BookService bookService;
+
+    @PostMapping
+    public ResponseEntity&lt;BookDTO&gt; addBook(@RequestBody BookDTO request) {
+<span class="fc" id="L23">        Book book = BookMapper.toModel(request);</span>
+<span class="fc" id="L24">        bookService.addBook(book, 1);</span>
+<span class="fc" id="L25">        return new ResponseEntity&lt;&gt;(BookMapper.toDTO(book), HttpStatus.CREATED);</span>
+    }
+
+    @GetMapping
+    public ResponseEntity&lt;List&lt;BookDTO&gt;&gt; getAllBooks() {
+<span class="fc" id="L30">        return ResponseEntity.ok(</span>
+<span class="fc" id="L31">                bookService.getAllBooks().stream()</span>
+<span class="fc" id="L32">                        .map(BookMapper::toDTO)</span>
+<span class="fc" id="L33">                        .toList()</span>
+        );
+    }
+
+    @GetMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;BookDTO&gt; getBookById(@PathVariable String id) {
+<span class="fc" id="L39">        Book book = bookService.getBookById(id);</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        if (book != null) {</span>
+<span class="fc" id="L41">            return ResponseEntity.ok(BookMapper.toDTO(book));</span>
+        } else {
+<span class="fc" id="L43">            return ResponseEntity.notFound().build();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
