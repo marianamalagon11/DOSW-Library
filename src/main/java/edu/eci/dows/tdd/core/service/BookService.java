@@ -37,5 +37,10 @@ public class BookService {
         return book != null && books.get(book) > 0;
     }
 
-
+    public void deleteBook(String id) {
+        Book book = getBookById(id);
+        if (book != null) {
+            books.remove(book);
+        }
+    }
 }

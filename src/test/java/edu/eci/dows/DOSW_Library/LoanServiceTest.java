@@ -18,7 +18,7 @@ public class LoanServiceTest {
         LoanService s = new LoanService();
         User u = new User("Luis", "U005");
         Book b = new Book("Cien años", "Gabo", "CA1");
-        Loan l = new Loan(b, u, LocalDate.now(), "ACTIVE", null);
+        Loan l = new Loan("L1", b, u, LocalDate.now(), "ACTIVE", null);
         s.addLoan(l);
         assertEquals(1, s.getLoansByUser(u).size());
     }
@@ -30,8 +30,8 @@ public class LoanServiceTest {
         User u2 = new User("Sonia", "U007");
         Book b1 = new Book("Rayuela", "Cortázar", "R1");
         Book b2 = new Book("La Ciudad", "Arias", "LC1");
-        Loan l1 = new Loan(b1, u1, LocalDate.now(), "ACTIVE", null);
-        Loan l2 = new Loan(b2, u2, LocalDate.now(), "ACTIVE", null);
+        Loan l1 = new Loan("L2", b1, u1, LocalDate.now(), "ACTIVE", null);
+        Loan l2 = new Loan("L3", b2, u2, LocalDate.now(), "ACTIVE", null);
         s.addLoan(l1);
         s.addLoan(l2);
         assertEquals(2, s.getAllLoans().size());
@@ -43,8 +43,8 @@ public class LoanServiceTest {
         User u = new User("Carlos", "U006");
         Book targetBook = new Book("Rayuela", "Cortazar", "R1");
         Book otherBook = new Book("La Ciudad", "Arias", "LC1");
-        Loan l1 = new Loan(targetBook, u, LocalDate.now(), "ACTIVE", null);
-        Loan l2 = new Loan(otherBook, u, LocalDate.now(), "ACTIVE", null);
+        Loan l1 = new Loan("L4", targetBook, u, LocalDate.now(), "ACTIVE", null);
+        Loan l2 = new Loan("L5", otherBook, u, LocalDate.now(), "ACTIVE", null);
         s.addLoan(l1);
         s.addLoan(l2);
 
@@ -57,7 +57,7 @@ public class LoanServiceTest {
         LoanService s = new LoanService();
         User u = new User("Carlos", "U006");
         Book existingBook = new Book("Rayuela", "Cortazar", "R1");
-        s.addLoan(new Loan(existingBook, u, LocalDate.now(), "ACTIVE", null));
+        s.addLoan(new Loan("L6", existingBook, u, LocalDate.now(), "ACTIVE", null));
 
         assertTrue(s.getLoansByBook(new Book("Otro", "Autor", "X")).isEmpty());
     }
@@ -68,7 +68,7 @@ public class LoanServiceTest {
         User requestedUser = new User("NoMatch", "U404");
         User existingUser = new User("Carlos", "U006");
         Book existingBook = new Book("Rayuela", "Cortazar", "R1");
-        s.addLoan(new Loan(existingBook, existingUser, LocalDate.now(), "ACTIVE", null));
+        s.addLoan(new Loan("L7", existingBook, existingUser, LocalDate.now(), "ACTIVE", null));
 
         assertTrue(s.getLoansByUser(requestedUser).isEmpty());
     }
@@ -77,7 +77,7 @@ public class LoanServiceTest {
     public void testLombokGetterAndSetterForLoans() {
         LoanService service = new LoanService();
         List<Loan> customLoans = new ArrayList<>();
-        customLoans.add(new Loan(new Book("1984", "Orwell", "B1"), new User("Ana", "U10"), LocalDate.now(), "ACTIVE", null));
+        customLoans.add(new Loan("L8", new Book("1984", "Orwell", "B1"), new User("Ana", "U10"), LocalDate.now(), "ACTIVE", null));
 
         service.setLoans(customLoans);
 

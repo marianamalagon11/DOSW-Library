@@ -32,7 +32,7 @@ El sistema gestiona los préstamos, verifica la disponibilidad de los libros, y 
 ### 1. **Ejecución de la API**
 - La API se levantó correctamente usando Spring Boot.
 - Endpoints disponibles:
-![endPoints.png](images/endPoints.png)
+![endpointsSwagger.png](images/endpointsSwagger.png)
 
 ---
 

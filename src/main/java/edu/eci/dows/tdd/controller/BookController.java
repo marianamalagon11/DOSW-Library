@@ -4,6 +4,7 @@ import edu.eci.dows.tdd.controller.dto.BookDTO;
 import edu.eci.dows.tdd.controller.mapper.BookMapper;
 import edu.eci.dows.tdd.core.service.BookService;
 import edu.eci.dows.tdd.core.model.Book;
+import edu.eci.dows.tdd.core.exception.BookNotAvailableException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +41,18 @@ public class BookController {
         if (book != null) {
             return ResponseEntity.ok(BookMapper.toDTO(book));
         } else {
-            return ResponseEntity.notFound().build();
+            throw new BookNotAvailableException("No existe el libro con id: " + id);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBook(@PathVariable String id) {
+        Book book = bookService.getBookById(id);
+        if (book != null) {
+            bookService.deleteBook(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            throw new BookNotAvailableException("No existe el libro con id: " + id);
         }
     }
 }

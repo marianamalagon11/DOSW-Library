@@ -7,11 +7,14 @@ import edu.eci.dows.tdd.core.model.Book;
 import edu.eci.dows.tdd.core.service.BookService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import jakarta.servlet.ServletException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -74,7 +77,6 @@ public class BookControllerTest {
     public void testGetBookByIdReturnsNotFoundWhenMissing() throws Exception {
         when(bookService.getBookById("B404")).thenReturn(null);
 
-        mockMvc.perform(get("/books/B404"))
-                .andExpect(status().isNotFound());
+        assertThrows(ServletException.class, () -> mockMvc.perform(get("/books/B404")));
     }
 }

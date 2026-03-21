@@ -50,7 +50,7 @@ public class LoanControllerTest {
         when(bookService.getBookById("B1")).thenReturn(book);
         when(userService.getUserById("U1")).thenReturn(user);
 
-        LoanDTO request = new LoanDTO("B1", "U1", LocalDate.of(2026, 3, 1), "ACTIVE", null);
+        LoanDTO request = new LoanDTO("L1", "B1", "U1", LocalDate.of(2026, 3, 1), "ACTIVE", null);
 
         mockMvc.perform(post("/loans")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -64,6 +64,7 @@ public class LoanControllerTest {
     @Test
     public void testGetAllLoansReturnsOkWithList() throws Exception {
         Loan loan1 = new Loan(
+                "L2",
                 new Book("1984", "Orwell", "B1"),
                 new User("Maria", "U1"),
                 LocalDate.of(2026, 3, 1),
@@ -71,6 +72,7 @@ public class LoanControllerTest {
                 null
         );
         Loan loan2 = new Loan(
+                "L3",
                 new Book("DDD", "Evans", "B2"),
                 new User("Ana", "U2"),
                 LocalDate.of(2026, 3, 2),

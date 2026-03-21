@@ -7,10 +7,10 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 
 public class Loan {
+    String id;
     Book book;
     User user;
     LocalDate loanDate;

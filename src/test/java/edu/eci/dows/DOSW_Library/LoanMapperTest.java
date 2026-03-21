@@ -16,6 +16,7 @@ public class LoanMapperTest {
     @Test
     public void testToDTOMapsAllFields() {
         Loan loan = new Loan(
+                "L1",
                 new Book("1984", "Orwell", "B1"),
                 new User("Maria", "U1"),
                 LocalDate.of(2026, 3, 1),
@@ -25,6 +26,7 @@ public class LoanMapperTest {
 
         LoanDTO dto = LoanMapper.toDTO(loan);
 
+        assertEquals("L1", dto.getId());
         assertEquals("B1", dto.getBookId());
         assertEquals("U1", dto.getUserId());
         assertEquals(LocalDate.of(2026, 3, 1), dto.getLoanDate());
@@ -35,6 +37,7 @@ public class LoanMapperTest {
     @Test
     public void testToModelMapsAllFields() {
         LoanDTO dto = new LoanDTO(
+                "L2",
                 "B2",
                 "U2",
                 LocalDate.of(2026, 4, 1),
@@ -46,6 +49,7 @@ public class LoanMapperTest {
 
         Loan loan = LoanMapper.toModel(dto, book, user);
 
+        assertEquals("L2", loan.getId());
         assertEquals(book, loan.getBook());
         assertEquals(user, loan.getUser());
         assertEquals(LocalDate.of(2026, 4, 1), loan.getLoanDate());

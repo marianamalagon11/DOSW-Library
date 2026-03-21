@@ -8,6 +8,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 public class LoanDTO {
+    private String id;
     private String bookId;
     private String userId;
     private LocalDate loanDate;

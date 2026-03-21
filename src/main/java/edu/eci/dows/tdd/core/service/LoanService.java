@@ -31,7 +31,6 @@ public class LoanService {
         return loans;
     }
 
-
     public List<Loan> getLoansByBook(Book book) {
         List<Loan> result = new ArrayList<>();
         for (Loan loan : loans) {
@@ -40,5 +39,24 @@ public class LoanService {
             }
         }
         return result;
+    }
+
+    public Loan getLoanById(String id) {
+        return loans.stream()
+                .filter(l -> l.getId().equals(id))
+                .findFirst().orElse(null);
+    }
+
+    public void deleteLoan(String id) {
+        loans.removeIf(l -> l.getId().equals(id));
+    }
+
+    public void updateLoan(String id, Loan updatedLoan) {
+        for (int i = 0; i < loans.size(); i++) {
+            if (loans.get(i).getId().equals(id)) {
+                loans.set(i, updatedLoan);
+                return;
+            }
+        }
     }
 }

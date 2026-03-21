@@ -13,7 +13,7 @@ public class LoanModelTest {
 
     @Test
     public void testNoArgsConstructorAndSetters() {
-        Loan loan = new Loan();
+        Loan loan = new Loan("L1", null, null, null, null, null);
         Book book = new Book("1984", "Orwell", "B1");
         User user = new User("Maria", "U1");
         LocalDate loanDate = LocalDate.now();
@@ -38,8 +38,8 @@ public class LoanModelTest {
         User user = new User("Maria", "U1");
         LocalDate loanDate = LocalDate.now();
 
-        Loan a = new Loan(book, user, loanDate, "ACTIVE", null);
-        Loan b = new Loan(book, user, loanDate, "ACTIVE", null);
+        Loan a = new Loan("L2", book, user, loanDate, "ACTIVE", null);
+        Loan b = new Loan("L2", book, user, loanDate, "ACTIVE", null);
 
         assertEquals(a, b);
         assertEquals(a.hashCode(), b.hashCode());
@@ -53,8 +53,8 @@ public class LoanModelTest {
         User user = new User("Maria", "U1");
         LocalDate loanDate = LocalDate.now();
 
-        Loan a = new Loan(book, user, loanDate, "ACTIVE", null);
-        Loan b = new Loan(book, user, loanDate, "RETURNED", null);
+        Loan a = new Loan("L3", book, user, loanDate, "ACTIVE", null);
+        Loan b = new Loan("L3", book, user, loanDate, "RETURNED", null);
 
         assertNotEquals(a, b);
     }

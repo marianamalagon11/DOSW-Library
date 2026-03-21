@@ -24,4 +24,8 @@ public class UserService {
                 .filter(u -> u.getId().equals(id))
                 .findFirst().orElse(null);
     }
+
+    public void deleteUser(String id) {
+        users.removeIf(u -> u.getId().equals(id));
+    }
 }
