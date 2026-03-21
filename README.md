@@ -66,10 +66,25 @@ https://youtu.be/e89HZGdI1U0
 - SonarQube:
 ![sonar.png](images/sonar.png)
   SonarQube se utilizó para realizar un análisis estático del código, evaluando aspectos de seguridad, mantenibilidad y calidad general.
-  Como se observa en el informe, no se detectaron vulnerabilidades ni puntos críticos (“bugs” o “code smells”).
+  Como se observa en el informe, no se detectaron vulnerabilidades ni puntos críticos (“bugs” o “code smells”). 
+- El porcentaje de cobertura que reporta SonarQube es ligeramente menor al mostrado por JaCoCo porque SonarQube incluye en su análisis otros archivos o clases auxiliares, y evalúa el total de líneas de manera más estricta, considerando también partes del código menos críticas para la lógica principal. Sin embargo, la cobertura de JaCoCo sobre el código principal del proyecto (86%) es la referencia estándar y es la que garantiza que se cumple el nivel de pruebas esperado según los criterios de la rúbrica.
+---
+
+### 3. **Ejecución de pruebas unitarias y funcionales**
+- Las pruebas se ejecutaron mediante Maven:
+![terminalTest.png](images/terminalTest.png)
+
+El proyecto cuenta tanto con pruebas unitarias (sobre modelos, mappers, servicios, validadores y utilidades), como con pruebas funcionales usando MockMvc, abarcando los flujos principales de la API (users, books, loans) y asegurando el correcto funcionamiento end-to-end de los endpoints y la integración de los componentes.
 
 ---
 
-### 3. **Ejecución de pruebas unitarias**
-- Las pruebas se ejecutaron mediante Maven:
-![terminalTest.png](images/terminalTest.png)
+### 4. Validaciones y manejo de errores
+
+- Se implementaron validaciones tanto a nivel de entrada de datos (anotaciones y validadores) como a nivel de lógica de negocio.
+- Se validan entradas nulas o inválidas y reglas de negocio (por ejemplo, no permitir préstamos duplicados ni exceder el límite).
+- Los errores relevantes devuelven respuestas JSON claras y estructuradas, gestionadas mediante un manejador global de excepciones.
+
+---
+### 5. Clases utilitarias
+
+Se implementaron utilidades como los mapeadores entre entidades y DTOs (LoanMapper, UserMapper, BookMapper), validadores (LoanValidator, BookValidator, UserValidator), y utilidades generales para fechas e identificación, que facilitan la reutilización y mantienen la lógica separada y ordenada.
