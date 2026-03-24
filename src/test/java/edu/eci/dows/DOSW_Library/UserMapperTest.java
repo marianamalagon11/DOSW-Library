@@ -11,7 +11,7 @@ public class UserMapperTest {
 
     @Test
     public void testToDTOMapsAllFields() {
-        User user = new User("Maria", "U1");
+        User user = new User("U1", "Maria");
 
         UserDTO dto = UserMapper.toDTO(user);
 

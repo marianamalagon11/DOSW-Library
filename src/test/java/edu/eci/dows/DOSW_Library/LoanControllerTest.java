@@ -46,8 +46,8 @@ public class LoanControllerTest {
 
     @Test
     public void testAddLoanReturnsCreated() throws Exception {
-        Book book = new Book("1984", "Orwell", "B1", 10, 9);
-        User user = new User("Maria", "U1");
+        Book book = new Book("B1", "1984", "Orwell", 10, 9);
+        User user = new User("U1", "Maria");
         when(bookService.getBookById("B1")).thenReturn(Optional.of(book));
         when(userService.getUserById("U1")).thenReturn(Optional.of(user));
         when(loanService.addLoan(org.mockito.ArgumentMatchers.any(Loan.class))).thenReturn(

@@ -12,7 +12,7 @@ public class BookMapperTest {
 
     @Test
     public void testToDTOMapsAllFields() {
-        Book book = new Book("Clean Code", "Robert C. Martin", "B1", 10, 8);
+        Book book = new Book("B1", "Clean Code", "Robert C. Martin", 10, 8);
 
         BookDTO dto = BookMapper.toDTO(book);
 

@@ -3,6 +3,7 @@ package edu.eci.dows.DOSW_Library;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.eci.dows.tdd.controller.UserController;
 import edu.eci.dows.tdd.controller.dto.UserDTO;
+import edu.eci.dows.tdd.core.exception.GlobalExceptionHandler;
 import edu.eci.dows.tdd.core.model.User;
 import edu.eci.dows.tdd.core.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +32,9 @@ public class UserControllerTest {
     public void setUp() {
         userService = mock(UserService.class);
         UserController controller = new UserController(userService);
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(controller)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
         objectMapper = new ObjectMapper().findAndRegisterModules();
     }
 
@@ -39,7 +42,7 @@ public class UserControllerTest {
     public void testAddUserReturnsCreated() throws Exception {
         UserDTO request = new UserDTO("U1", "Maria");
         when(userService.addUser(org.mockito.ArgumentMatchers.any(User.class)))
-                .thenReturn(new User("Maria", "U1"));
+                .thenReturn(new User("U1", "Maria"));
 
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -52,8 +55,8 @@ public class UserControllerTest {
     @Test
     public void testGetAllUsersReturnsOkWithList() throws Exception {
         when(userService.getAllUsers()).thenReturn(List.of(
-                new User("Maria", "U1"),
-                new User("Ana", "U2")
+                new User("U1", "Maria"),
+                new User("U2", "Ana")
         ));
 
         mockMvc.perform(get("/users"))
@@ -64,7 +67,7 @@ public class UserControllerTest {
 
     @Test
     public void testGetUserByIdReturnsOkWhenExists() throws Exception {
-        when(userService.getUserById("U1")).thenReturn(Optional.of(new User("Maria", "U1")));
+        when(userService.getUserById("U1")).thenReturn(Optional.of(new User("U1", "Maria")));
 
         mockMvc.perform(get("/users/U1"))
                 .andExpect(status().isOk())
@@ -77,6 +80,6 @@ public class UserControllerTest {
         when(userService.getUserById("U404")).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/users/U404"))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().isNotFound());
     }
 }

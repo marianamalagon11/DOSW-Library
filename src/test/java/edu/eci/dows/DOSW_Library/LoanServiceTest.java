@@ -27,12 +27,14 @@ public class LoanServiceTest {
         UserRepository userRepository = mock(UserRepository.class);
         LoanService service = new LoanService(loanRepository, bookRepository, userRepository);
 
-        Book modelBook = new Book("Cien anios", "Gabo", "CA1", 4, 3);
-        User modelUser = new User("Luis", "U005");
+        Book modelBook = new Book("CA1", "Cien anios", "Gabo", 4, 3);
+        User modelUser = new User("U005", "Luis");
         Loan input = new Loan("L1", modelBook, modelUser, LocalDate.now(), "ACTIVE", null);
 
         BookEntity bookEntity = new BookEntity();
         bookEntity.setId("CA1");
+        bookEntity.setTotalStock(4);
+        bookEntity.setAvailableStock(3);
         UserEntity userEntity = new UserEntity();
         userEntity.setId("U005");
 
@@ -122,7 +124,7 @@ public class LoanServiceTest {
         when(bookRepository.findById("B1")).thenReturn(Optional.of(bookEntity));
         when(userRepository.findById("U1")).thenReturn(Optional.of(userEntity));
 
-        Loan updated = new Loan("other", new Book("B1", "1984", "Orwell", 10, 9), new User("Ana", "U1"), LocalDate.now(), "ACTIVE", null);
+        Loan updated = new Loan("other", new Book("B1", "1984", "Orwell", 10, 9), new User("U1", "Ana"), LocalDate.now(), "ACTIVE", null);
         service.updateLoan("L6", updated);
 
         verify(loanRepository).save(any(LoanEntity.class));
