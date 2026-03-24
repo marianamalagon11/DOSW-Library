@@ -10,5 +10,7 @@ public class Book {
     String title;
     String author;
     String id;
+    private int totalStock;
+    private int availableStock;
 
 }

@@ -32,7 +32,7 @@ Este diseño modular promueve la mantenibilidad y la correcta separación de res
 
 ---
 ### Diagrama de clases
-![diaClases.png](images/diaClases.png)
+![diagamaClases.png](images/diagamaClases.png)
 
 Este diagrama muestra las principales entidades del sistema:
 
@@ -43,7 +43,7 @@ Las flechas indican las relaciones entre clases: un Loan siempre está vinculado
 
 
 ### Modelo entidad-relación
-![modeloEntidadRelacion.png](images/modeloEntidadRelacion.png)
+![modelEntidadRelacion.png](images/modelEntidadRelacion.png)
 
 El modelo se encuentra en tercera forma normal ya que todas las tablas poseen clave primaria, no hay datos redundantes, y no existen dependencias transitivas. Las relaciones son de agregación, permitiendo la independencia de Book y User si se elimina un Loan.
 
@@ -94,3 +94,11 @@ El proyecto cuenta tanto con pruebas unitarias (sobre modelos, mappers, servicio
 ### 5. Clases utilitarias
 
 Se implementaron utilidades como los mapeadores entre entidades y DTOs (LoanMapper, UserMapper, BookMapper), validadores (LoanValidator, BookValidator, UserValidator), y utilidades generales para fechas e identificación, que facilitan la reutilización y mantienen la lógica separada y ordenada.
+
+### Persistencia:
+Prueba conexión base de datos:
+![conexionDB.png](images/conexionDB.png)
+
+Para eliminar la utilización de estructuras de datos como persistencia en memoria:
+Se elimina cualquier List, Map u otra colección de persistencia en memoria.
+Se inyecta el repositorio correspondiente en cada servicio mediante constructor.

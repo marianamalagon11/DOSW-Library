@@ -3,8 +3,8 @@ package edu.eci.dows.tdd.controller;
 import edu.eci.dows.tdd.controller.dto.BookDTO;
 import edu.eci.dows.tdd.controller.mapper.BookMapper;
 import edu.eci.dows.tdd.core.service.BookService;
-import edu.eci.dows.tdd.core.model.Book;
 import edu.eci.dows.tdd.core.exception.BookNotAvailableException;
+import edu.eci.dows.tdd.core.model.Book;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +22,8 @@ public class BookController {
     @PostMapping
     public ResponseEntity<BookDTO> addBook(@RequestBody BookDTO request) {
         Book book = BookMapper.toModel(request);
-        bookService.addBook(book, 1);
-        return new ResponseEntity<>(BookMapper.toDTO(book), HttpStatus.CREATED);
+        Book saved = bookService.addBook(book);
+        return new ResponseEntity<>(BookMapper.toDTO(saved), HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -37,18 +37,14 @@ public class BookController {
 
     @GetMapping("/{id}")
     public ResponseEntity<BookDTO> getBookById(@PathVariable String id) {
-        Book book = bookService.getBookById(id);
-        if (book != null) {
-            return ResponseEntity.ok(BookMapper.toDTO(book));
-        } else {
-            throw new BookNotAvailableException("No existe el libro con id: " + id);
-        }
+        return bookService.getBookById(id)
+                .map(book -> ResponseEntity.ok(BookMapper.toDTO(book)))
+                .orElseThrow(() -> new BookNotAvailableException("No existe el libro con id: " + id));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBook(@PathVariable String id) {
-        Book book = bookService.getBookById(id);
-        if (book != null) {
+        if (bookService.getBookById(id).isPresent()) {
             bookService.deleteBook(id);
             return ResponseEntity.noContent().build();
         } else {

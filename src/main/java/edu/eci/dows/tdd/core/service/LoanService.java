@@ -3,60 +3,59 @@ package edu.eci.dows.tdd.core.service;
 import edu.eci.dows.tdd.core.model.Book;
 import edu.eci.dows.tdd.core.model.Loan;
 import edu.eci.dows.tdd.core.model.User;
-import lombok.Data;
+import edu.eci.dows.tdd.
+        persistence.repository.LoanRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
-@Data
 public class LoanService {
-    private List<Loan> loans = new ArrayList<>();
 
-    public void addLoan(Loan loan) {
-        loans.add(loan);
+    private final LoanRepository loanRepository;
+
+    @Autowired
+    public LoanService(LoanRepository loanRepository) {
+        this.loanRepository = loanRepository;
+    }
+
+    public Loan addLoan(Loan loan) {
+        return loanRepository.save(loan);
     }
 
     public List<Loan> getLoansByUser(User user) {
-        List<Loan> result = new ArrayList<>();
-        for (Loan loan : loans) {
-            if (loan.getUser().equals(user)) {
-                result.add(loan);
-            }
-        }
-        return result;
+        return loanRepository.findAll()
+                .stream()
+                .filter(loan -> loan.getUser().equals(user))
+                .collect(Collectors.toList());
     }
 
     public List<Loan> getAllLoans() {
-        return loans;
+        return loanRepository.findAll();
     }
 
     public List<Loan> getLoansByBook(Book book) {
-        List<Loan> result = new ArrayList<>();
-        for (Loan loan : loans) {
-            if (loan.getBook().equals(book)) {
-                result.add(loan);
-            }
-        }
-        return result;
+        return loanRepository.findAll()
+                .stream()
+                .filter(loan -> loan.getBook().equals(book))
+                .collect(Collectors.toList());
     }
 
-    public Loan getLoanById(String id) {
-        return loans.stream()
-                .filter(l -> l.getId().equals(id))
-                .findFirst().orElse(null);
+    public Optional<Loan> getLoanById(String id) {
+        return loanRepository.findById(id);
     }
 
     public void deleteLoan(String id) {
-        loans.removeIf(l -> l.getId().equals(id));
+        loanRepository.deleteById(id);
     }
 
     public void updateLoan(String id, Loan updatedLoan) {
-        for (int i = 0; i < loans.size(); i++) {
-            if (loans.get(i).getId().equals(id)) {
-                loans.set(i, updatedLoan);
-                return;
-            }
+        if (loanRepository.existsById(id)) {
+            updatedLoan.setId(id);
+            loanRepository.save(updatedLoan);
         }
     }
 }

@@ -1,46 +1,54 @@
 package edu.eci.dows.tdd.core.service;
 
 import edu.eci.dows.tdd.core.model.Book;
-import lombok.Data;
+import edu.eci.dows.tdd.persistence.repository.BookRepository;
+import edu.eci.dows.tdd.persistence.entity.BookEntity;
+import edu.eci.dows.tdd.controller.mapper.BookMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @Service
-@Data
 public class BookService {
-    private Map<Book, Integer> books = new HashMap<>();
 
-    public void addBook(Book book, int count) {
-        books.put(book, count);
+    private final BookRepository bookRepository;
+
+    @Autowired
+    public BookService(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
     }
 
-    public Set<Book> getAllBooks() {
-        return books.keySet();
+    public Book addBook(Book book) {
+        BookEntity entity = BookMapper.toEntity(book);
+        BookEntity saved = bookRepository.save(entity);
+        return BookMapper.toModel(saved);
     }
 
-    public Book getBookById(String id) {
-        return books.keySet().stream()
-                .filter(b -> b.getId().equals(id))
-                .findFirst().orElse(null);
+    public List<Book> getAllBooks() {
+        return bookRepository.findAll().stream().map(BookMapper::toModel).toList();
     }
 
-    public void updateBookCount(String id, int newCount) {
-        Book book = getBookById(id);
-        if (book != null) {
-            books.put(book, newCount);
-        }
+    public Optional<Book> getBookById(String id) {
+        return bookRepository.findById(id).map(BookMapper::toModel);
+    }
+
+    public void updateBookStock(String id, int newTotal, int newAvailable) {
+        bookRepository.findById(id).ifPresent(entity -> {
+            entity.setTotalStock(newTotal);
+            entity.setAvailableStock(newAvailable);
+            bookRepository.save(entity);
+        });
     }
 
     public boolean isBookAvailable(String id) {
-        Book book = getBookById(id);
-        return book != null && books.get(book) > 0;
+        return bookRepository.findById(id)
+                .map(entity -> entity.getAvailableStock() > 0)
+                .orElse(false);
     }
 
     public void deleteBook(String id) {
-        Book book = getBookById(id);
-        if (book != null) {
-            books.remove(book);
-        }
+        bookRepository.deleteById(id);
     }
 }
