@@ -102,3 +102,6 @@ Prueba conexión base de datos:
 Para eliminar la utilización de estructuras de datos como persistencia en memoria:
 Se elimina cualquier List, Map u otra colección de persistencia en memoria.
 Se inyecta el repositorio correspondiente en cada servicio mediante constructor.
+
+Link video demo:
+https://youtu.be/CaZvytN92rA

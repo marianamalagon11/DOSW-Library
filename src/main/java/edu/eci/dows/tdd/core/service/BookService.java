@@ -2,11 +2,13 @@ package edu.eci.dows.tdd.core.service;
 
 import edu.eci.dows.tdd.core.model.Book;
 import edu.eci.dows.tdd.persistence.repository.BookRepository;
+import edu.eci.dows.tdd.persistence.repository.LoanRepository;
 import edu.eci.dows.tdd.persistence.entity.BookEntity;
 import edu.eci.dows.tdd.controller.mapper.BookMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,10 +16,12 @@ import java.util.Optional;
 public class BookService {
 
     private final BookRepository bookRepository;
+    private final LoanRepository loanRepository;
 
     @Autowired
-    public BookService(BookRepository bookRepository) {
+    public BookService(BookRepository bookRepository, LoanRepository loanRepository) {
         this.bookRepository = bookRepository;
+        this.loanRepository = loanRepository;
     }
 
     public Book addBook(Book book) {
@@ -50,5 +54,24 @@ public class BookService {
 
     public void deleteBook(String id) {
         bookRepository.deleteById(id);
+    }
+
+    public Optional<Book> updateBook(String id, Book updatedBook) {
+        return bookRepository.findById(id).map(existingEntity -> {
+            existingEntity.setTitle(updatedBook.getTitle());
+            existingEntity.setAuthor(updatedBook.getAuthor());
+            int newTotal = updatedBook.getTotalStock();
+            int oldAvailable = existingEntity.getAvailableStock();
+            existingEntity.setTotalStock(newTotal);
+
+            List<String> statusDevuelto = Arrays.asList("DEVUELTO", "RETURNED");
+            long prestamosActivos = loanRepository.countByBookIdAndStatusNotIn(id, statusDevuelto);
+            int stockCalculado = newTotal - (int)prestamosActivos;
+            if (oldAvailable > newTotal) {
+                existingEntity.setAvailableStock(Math.max(stockCalculado, 0));
+            }
+            BookEntity saved = bookRepository.save(existingEntity);
+            return BookMapper.toModel(saved);
+        });
     }
 }

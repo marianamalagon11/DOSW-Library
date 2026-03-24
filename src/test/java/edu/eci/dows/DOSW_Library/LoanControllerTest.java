@@ -69,16 +69,16 @@ public class LoanControllerTest {
     public void testGetAllLoansReturnsOkWithList() throws Exception {
         Loan loan1 = new Loan(
                 "L2",
-                new Book("1984", "Orwell", "B1", 10, 9),
-                new User("Maria", "U1"),
+                new Book("B1", "1984", "Orwell", 10, 9),
+                new User("U1", "Maria"),
                 LocalDate.of(2026, 3, 1),
                 "ACTIVE",
                 null
         );
         Loan loan2 = new Loan(
                 "L3",
-                new Book("DDD", "Evans", "B2", 8, 8),
-                new User("Ana", "U2"),
+                new Book("B2", "DDD", "Evans", 8, 8),
+                new User("U2", "Ana"),
                 LocalDate.of(2026, 3, 2),
                 "RETURNED",
                 LocalDate.of(2026, 3, 10)

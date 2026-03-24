@@ -25,7 +25,7 @@ public class BookMapperTest {
 
     @Test
     public void testToEntityAndBackMapsAllFields() {
-        Book model = new Book("DDD", "Eric Evans", "B2", 12, 11);
+        Book model = new Book("B2", "DDD", "Eric Evans", 12, 11);
 
         BookEntity entity = BookMapper.toEntity(model);
         Book book = BookMapper.toModel(entity);

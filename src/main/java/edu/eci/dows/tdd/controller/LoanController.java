@@ -30,8 +30,10 @@ public class LoanController {
     @PostMapping
     public ResponseEntity<LoanDTO> addLoan(@RequestBody LoanDTO request) {
         try {
-            Book book = bookService.getBookById(request.getBookId()).orElseThrow();
-            User user = userService.getUserById(request.getUserId()).orElseThrow();
+            Book book = bookService.getBookById(request.getBookId())
+                    .orElseThrow(() -> new BookNotAvailableException("No existe el libro con id: " + request.getBookId()));
+            User user = userService.getUserById(request.getUserId())
+                    .orElseThrow(() -> new UserNotFoundException("No existe el usuario con id: " + request.getUserId()));
             Loan loanToCreate = LoanMapper.toModel(request, book, user);
             Loan loanCreated = loanService.addLoan(loanToCreate);
             return new ResponseEntity<>(LoanMapper.toDTO(loanCreated), HttpStatus.CREATED);
@@ -68,19 +70,22 @@ public class LoanController {
     @PutMapping("/{id}")
     public ResponseEntity<LoanDTO> updateLoan(@PathVariable String id, @RequestBody LoanDTO request) {
         if (loanService.getLoanById(id).isEmpty()) {
-            return ResponseEntity.notFound().build();
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
         try {
-            Book book = bookService.getBookById(request.getBookId()).orElseThrow();
-            User user = userService.getUserById(request.getUserId()).orElseThrow();
+            Book book = bookService.getBookById(request.getBookId())
+                    .orElseThrow(() -> new BookNotAvailableException("No existe el libro con id: " + request.getBookId()));
+            User user = userService.getUserById(request.getUserId())
+                    .orElseThrow(() -> new UserNotFoundException("No existe el usuario con id: " + request.getUserId()));
             Loan updatedLoan = LoanMapper.toModel(request, book, user);
             loanService.updateLoan(id, updatedLoan);
             return loanService.getLoanById(id)
                     .map(LoanMapper::toDTO)
                     .map(ResponseEntity::ok)
-                    .orElse(ResponseEntity.notFound().build());
+                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
         } catch (BookNotAvailableException | UserNotFoundException | LoanLimitExceededException ex) {
-            return ResponseEntity.badRequest().build();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 }

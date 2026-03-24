@@ -122,7 +122,7 @@ public class LoanServiceTest {
         when(bookRepository.findById("B1")).thenReturn(Optional.of(bookEntity));
         when(userRepository.findById("U1")).thenReturn(Optional.of(userEntity));
 
-        Loan updated = new Loan("other", new Book("1984", "Orwell", "B1", 10, 9), new User("Ana", "U1"), LocalDate.now(), "ACTIVE", null);
+        Loan updated = new Loan("other", new Book("B1", "1984", "Orwell", 10, 9), new User("Ana", "U1"), LocalDate.now(), "ACTIVE", null);
         service.updateLoan("L6", updated);
 
         verify(loanRepository).save(any(LoanEntity.class));

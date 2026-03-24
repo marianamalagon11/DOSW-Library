@@ -17,8 +17,8 @@ public class LoanMapperTest {
     public void testToDTOMapsAllFields() {
         Loan loan = new Loan(
                 "L1",
-                new Book("1984", "Orwell", "B1", 10, 9),
-                new User("Maria", "U1"),
+                new Book("B1", "1984", "Orwell", 10, 9),
+                new User("U1", "Maria"),
                 LocalDate.of(2026, 3, 1),
                 "ACTIVE",
                 LocalDate.of(2026, 3, 15)

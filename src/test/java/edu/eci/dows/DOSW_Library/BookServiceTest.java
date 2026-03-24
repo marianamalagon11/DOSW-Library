@@ -4,6 +4,7 @@ import edu.eci.dows.tdd.core.model.Book;
 import edu.eci.dows.tdd.core.service.BookService;
 import edu.eci.dows.tdd.persistence.entity.BookEntity;
 import edu.eci.dows.tdd.persistence.repository.BookRepository;
+import edu.eci.dows.tdd.persistence.repository.LoanRepository;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -16,7 +17,8 @@ public class BookServiceTest {
     @Test
     public void testAddBookMapsAndReturnsSavedModel() {
         BookRepository repository = mock(BookRepository.class);
-        BookService service = new BookService(repository);
+        LoanRepository loanRepository = mock(LoanRepository.class);
+        BookService service = new BookService(repository, loanRepository);
 
         Book input = new Book("El Quijote", "Cervantes", "1", 3, 2);
         BookEntity saved = new BookEntity();
@@ -38,7 +40,8 @@ public class BookServiceTest {
     @Test
     public void testGetAllBooksMapsFromRepository() {
         BookRepository repository = mock(BookRepository.class);
-        BookService service = new BookService(repository);
+        LoanRepository loanRepository = mock(LoanRepository.class);
+        BookService service = new BookService(repository, loanRepository);
 
         BookEntity b1 = new BookEntity();
         b1.setId("1");
@@ -64,7 +67,8 @@ public class BookServiceTest {
     @Test
     public void testGetBookByIdWhenFound() {
         BookRepository repository = mock(BookRepository.class);
-        BookService service = new BookService(repository);
+        LoanRepository loanRepository = mock(LoanRepository.class);
+        BookService service = new BookService(repository, loanRepository);
 
         BookEntity entity = new BookEntity();
         entity.setId("1");
@@ -83,7 +87,8 @@ public class BookServiceTest {
     @Test
     public void testUpdateBookStockWhenBookExists() {
         BookRepository repository = mock(BookRepository.class);
-        BookService service = new BookService(repository);
+        LoanRepository loanRepository = mock(LoanRepository.class);
+        BookService service = new BookService(repository, loanRepository);
 
         BookEntity entity = new BookEntity();
         entity.setId("1");
@@ -102,7 +107,8 @@ public class BookServiceTest {
     @Test
     public void testIsBookAvailableWhenNotFoundReturnsFalse() {
         BookRepository repository = mock(BookRepository.class);
-        BookService service = new BookService(repository);
+        LoanRepository loanRepository = mock(LoanRepository.class);
+        BookService service = new BookService(repository, loanRepository);
 
         when(repository.findById("missing")).thenReturn(Optional.empty());
 
@@ -112,7 +118,8 @@ public class BookServiceTest {
     @Test
     public void testDeleteBookDelegatesToRepository() {
         BookRepository repository = mock(BookRepository.class);
-        BookService service = new BookService(repository);
+        LoanRepository loanRepository = mock(LoanRepository.class);
+        BookService service = new BookService(repository, loanRepository);
 
         service.deleteBook("1");
 

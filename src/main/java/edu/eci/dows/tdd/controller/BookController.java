@@ -51,4 +51,12 @@ public class BookController {
             throw new BookNotAvailableException("No existe el libro con id: " + id);
         }
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<BookDTO> updateBook(@PathVariable String id, @RequestBody BookDTO request) {
+        Book updatedBook = BookMapper.toModel(request);
+        return bookService.updateBook(id, updatedBook)
+                .map(book -> ResponseEntity.ok(BookMapper.toDTO(book)))
+                .orElseThrow(() -> new BookNotAvailableException("No existe el libro con id: " + id));
+    }
 }

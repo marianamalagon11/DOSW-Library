@@ -66,7 +66,7 @@ public class BookControllerTest {
 
     @Test
     public void testGetBookByIdReturnsOkWhenExists() throws Exception {
-        when(bookService.getBookById("B1")).thenReturn(Optional.of(new Book("Clean Code", "Robert C. Martin", "B1", 8, 7)));
+        when(bookService.getBookById("B1")).thenReturn(Optional.of(new Book("B1", "Clean Code", "Robert C. Martin", 8, 7)));
 
         mockMvc.perform(get("/books/B1"))
                 .andExpect(status().isOk())
