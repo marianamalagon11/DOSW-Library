@@ -32,7 +32,7 @@ Este diseño modular promueve la mantenibilidad y la correcta separación de res
 
 ---
 ### Diagrama de clases
-![DiagramaDeClases.png](images/DiagramaDeClases.png)
+![diaClases.png](images/diaClases.png)
 
 Este diagrama muestra las principales entidades del sistema:
 
@@ -40,6 +40,12 @@ Book: Representa los libros disponibles en la biblioteca, con atributos como id,
 User: Modela los usuarios registrados, identificados principalmente por su id y name.
 Loan: Representa cada préstamo de un libro a un usuario, asociando a ambos mediante los campos book y user. Además, mantiene información sobre las fechas de préstamo y devolución, estado del préstamo (status) e identificador único (id).
 Las flechas indican las relaciones entre clases: un Loan siempre está vinculado a un Book y a un User, reflejando así cómo se modelan y relacionan los datos en la aplicación.
+
+
+### Modelo entidad-relación
+![modeloEntidadRelacion.png](images/modeloEntidadRelacion.png)
+
+El modelo se encuentra en tercera forma normal ya que todas las tablas poseen clave primaria, no hay datos redundantes, y no existen dependencias transitivas. Las relaciones son de agregación, permitiendo la independencia de Book y User si se elimina un Loan.
 
 ---
 ## Pruebas
