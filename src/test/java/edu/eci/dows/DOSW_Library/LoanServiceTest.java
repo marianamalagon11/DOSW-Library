@@ -4,95 +4,137 @@ import edu.eci.dows.tdd.core.model.Book;
 import edu.eci.dows.tdd.core.model.Loan;
 import edu.eci.dows.tdd.core.model.User;
 import edu.eci.dows.tdd.core.service.LoanService;
+import edu.eci.dows.tdd.persistence.entity.BookEntity;
+import edu.eci.dows.tdd.persistence.entity.LoanEntity;
+import edu.eci.dows.tdd.persistence.entity.UserEntity;
+import edu.eci.dows.tdd.persistence.repository.BookRepository;
+import edu.eci.dows.tdd.persistence.repository.LoanRepository;
+import edu.eci.dows.tdd.persistence.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class LoanServiceTest {
     @Test
-    public void testAddLoanAndGetLoanByUser() {
-        LoanService s = new LoanService();
-        User u = new User("Luis", "U005");
-        Book b = new Book("Cien años", "Gabo", "CA1");
-        Loan l = new Loan("L1", b, u, LocalDate.now(), "ACTIVE", null);
-        s.addLoan(l);
-        assertEquals(1, s.getLoansByUser(u).size());
+    public void testAddLoanReturnsSavedLoan() {
+        LoanRepository loanRepository = mock(LoanRepository.class);
+        BookRepository bookRepository = mock(BookRepository.class);
+        UserRepository userRepository = mock(UserRepository.class);
+        LoanService service = new LoanService(loanRepository, bookRepository, userRepository);
+
+        Book modelBook = new Book("Cien anios", "Gabo", "CA1", 4, 3);
+        User modelUser = new User("Luis", "U005");
+        Loan input = new Loan("L1", modelBook, modelUser, LocalDate.now(), "ACTIVE", null);
+
+        BookEntity bookEntity = new BookEntity();
+        bookEntity.setId("CA1");
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId("U005");
+
+        LoanEntity savedEntity = new LoanEntity();
+        savedEntity.setId("L1");
+        savedEntity.setBook(bookEntity);
+        savedEntity.setUser(userEntity);
+        savedEntity.setLoanDate(input.getLoanDate());
+        savedEntity.setStatus("ACTIVE");
+        savedEntity.setReturnDate(null);
+
+        when(bookRepository.findById("CA1")).thenReturn(Optional.of(bookEntity));
+        when(userRepository.findById("U005")).thenReturn(Optional.of(userEntity));
+        when(loanRepository.save(any(LoanEntity.class))).thenReturn(savedEntity);
+
+        Loan result = service.addLoan(input);
+        assertEquals("L1", result.getId());
+        assertEquals("CA1", result.getBook().getId());
+        assertEquals("U005", result.getUser().getId());
     }
 
     @Test
     public void testGetAllLoans() {
-        LoanService s = new LoanService();
-        User u1 = new User("Carlos", "U006");
-        User u2 = new User("Sonia", "U007");
-        Book b1 = new Book("Rayuela", "Cortázar", "R1");
-        Book b2 = new Book("La Ciudad", "Arias", "LC1");
-        Loan l1 = new Loan("L2", b1, u1, LocalDate.now(), "ACTIVE", null);
-        Loan l2 = new Loan("L3", b2, u2, LocalDate.now(), "ACTIVE", null);
-        s.addLoan(l1);
-        s.addLoan(l2);
-        assertEquals(2, s.getAllLoans().size());
+        LoanRepository loanRepository = mock(LoanRepository.class);
+        LoanService service = new LoanService(loanRepository, mock(BookRepository.class), mock(UserRepository.class));
+
+        BookEntity book = new BookEntity();
+        book.setId("R1");
+        UserEntity user = new UserEntity();
+        user.setId("U1");
+
+        LoanEntity l1 = new LoanEntity();
+        l1.setId("L2");
+        l1.setBook(book);
+        l1.setUser(user);
+        l1.setLoanDate(LocalDate.now());
+
+        LoanEntity l2 = new LoanEntity();
+        l2.setId("L3");
+        l2.setBook(book);
+        l2.setUser(user);
+        l2.setLoanDate(LocalDate.now());
+
+        when(loanRepository.findAll()).thenReturn(List.of(l1, l2));
+
+        assertEquals(2, service.getAllLoans().size());
     }
 
     @Test
-    public void testGetLoansByBookReturnsOnlyMatchingLoans() {
-        LoanService s = new LoanService();
-        User u = new User("Carlos", "U006");
-        Book targetBook = new Book("Rayuela", "Cortazar", "R1");
-        Book otherBook = new Book("La Ciudad", "Arias", "LC1");
-        Loan l1 = new Loan("L4", targetBook, u, LocalDate.now(), "ACTIVE", null);
-        Loan l2 = new Loan("L5", otherBook, u, LocalDate.now(), "ACTIVE", null);
-        s.addLoan(l1);
-        s.addLoan(l2);
+    public void testGetLoanByIdWhenFound() {
+        LoanRepository loanRepository = mock(LoanRepository.class);
+        LoanService service = new LoanService(loanRepository, mock(BookRepository.class), mock(UserRepository.class));
 
-        assertEquals(1, s.getLoansByBook(targetBook).size());
-        assertTrue(s.getLoansByBook(targetBook).contains(l1));
+        BookEntity book = new BookEntity();
+        book.setId("R1");
+        UserEntity user = new UserEntity();
+        user.setId("U1");
+
+        LoanEntity entity = new LoanEntity();
+        entity.setId("L4");
+        entity.setBook(book);
+        entity.setUser(user);
+        entity.setLoanDate(LocalDate.now());
+
+        when(loanRepository.findById("L4")).thenReturn(Optional.of(entity));
+
+        Optional<Loan> result = service.getLoanById("L4");
+        assertTrue(result.isPresent());
+        assertEquals("L4", result.get().getId());
     }
 
     @Test
-    public void testGetLoansByBookWhenNoMatchesReturnsEmptyList() {
-        LoanService s = new LoanService();
-        User u = new User("Carlos", "U006");
-        Book existingBook = new Book("Rayuela", "Cortazar", "R1");
-        s.addLoan(new Loan("L6", existingBook, u, LocalDate.now(), "ACTIVE", null));
+    public void testUpdateLoanWhenExistsSavesEntity() {
+        LoanRepository loanRepository = mock(LoanRepository.class);
+        BookRepository bookRepository = mock(BookRepository.class);
+        UserRepository userRepository = mock(UserRepository.class);
+        LoanService service = new LoanService(loanRepository, bookRepository, userRepository);
 
-        assertTrue(s.getLoansByBook(new Book("Otro", "Autor", "X")).isEmpty());
+        LoanEntity existing = new LoanEntity();
+        existing.setId("L6");
+        when(loanRepository.findById("L6")).thenReturn(Optional.of(existing));
+
+        BookEntity bookEntity = new BookEntity();
+        bookEntity.setId("B1");
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId("U1");
+        when(bookRepository.findById("B1")).thenReturn(Optional.of(bookEntity));
+        when(userRepository.findById("U1")).thenReturn(Optional.of(userEntity));
+
+        Loan updated = new Loan("other", new Book("1984", "Orwell", "B1", 10, 9), new User("Ana", "U1"), LocalDate.now(), "ACTIVE", null);
+        service.updateLoan("L6", updated);
+
+        verify(loanRepository).save(any(LoanEntity.class));
     }
 
     @Test
-    public void testGetLoansByUserWhenNoMatchesReturnsEmptyList() {
-        LoanService s = new LoanService();
-        User requestedUser = new User("NoMatch", "U404");
-        User existingUser = new User("Carlos", "U006");
-        Book existingBook = new Book("Rayuela", "Cortazar", "R1");
-        s.addLoan(new Loan("L7", existingBook, existingUser, LocalDate.now(), "ACTIVE", null));
+    public void testDeleteLoanDelegatesToRepository() {
+        LoanRepository loanRepository = mock(LoanRepository.class);
+        LoanService service = new LoanService(loanRepository, mock(BookRepository.class), mock(UserRepository.class));
 
-        assertTrue(s.getLoansByUser(requestedUser).isEmpty());
-    }
+        service.deleteLoan("L8");
 
-    @Test
-    public void testLombokGetterAndSetterForLoans() {
-        LoanService service = new LoanService();
-        List<Loan> customLoans = new ArrayList<>();
-        customLoans.add(new Loan("L8", new Book("1984", "Orwell", "B1"), new User("Ana", "U10"), LocalDate.now(), "ACTIVE", null));
-
-        service.setLoans(customLoans);
-
-        assertEquals(customLoans, service.getLoans());
-        assertEquals(1, service.getLoans().size());
-    }
-
-    @Test
-    public void testLombokEqualsHashCodeAndToStringForLoanService() {
-        LoanService a = new LoanService();
-        LoanService b = new LoanService();
-
-        assertEquals(a, b);
-        assertEquals(a.hashCode(), b.hashCode());
-        assertNotNull(a.toString());
-        assertTrue(a.toString().contains("loans"));
+        verify(loanRepository).deleteById("L8");
     }
 }

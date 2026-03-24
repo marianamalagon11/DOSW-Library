@@ -7,14 +7,12 @@ import edu.eci.dows.tdd.core.model.User;
 import edu.eci.dows.tdd.core.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import jakarta.servlet.ServletException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.util.Optional;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -40,6 +38,8 @@ public class UserControllerTest {
     @Test
     public void testAddUserReturnsCreated() throws Exception {
         UserDTO request = new UserDTO("U1", "Maria");
+        when(userService.addUser(org.mockito.ArgumentMatchers.any(User.class)))
+                .thenReturn(new User("Maria", "U1"));
 
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -64,7 +64,7 @@ public class UserControllerTest {
 
     @Test
     public void testGetUserByIdReturnsOkWhenExists() throws Exception {
-        when(userService.getUserById("U1")).thenReturn(new User("Maria", "U1"));
+        when(userService.getUserById("U1")).thenReturn(Optional.of(new User("Maria", "U1")));
 
         mockMvc.perform(get("/users/U1"))
                 .andExpect(status().isOk())
@@ -73,9 +73,10 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testGetUserByIdReturnsNotFoundWhenMissing() throws Exception {
-        when(userService.getUserById("U404")).thenReturn(null);
+    public void testGetUserByIdMissingReturnsServerError() throws Exception {
+        when(userService.getUserById("U404")).thenReturn(Optional.empty());
 
-        assertThrows(ServletException.class, () -> mockMvc.perform(get("/users/U404")));
+        mockMvc.perform(get("/users/U404"))
+                .andExpect(status().is5xxServerError());
     }
 }

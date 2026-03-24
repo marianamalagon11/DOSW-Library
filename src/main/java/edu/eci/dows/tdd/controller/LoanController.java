@@ -3,18 +3,20 @@ package edu.eci.dows.tdd.controller;
 import lombok.RequiredArgsConstructor;
 import edu.eci.dows.tdd.controller.dto.LoanDTO;
 import edu.eci.dows.tdd.controller.mapper.LoanMapper;
-import edu.eci.dows.tdd.core.service.LoanService;
-import edu.eci.dows.tdd.core.service.BookService;
-import edu.eci.dows.tdd.core.service.UserService;
-import edu.eci.dows.tdd.core.model.Loan;
 import edu.eci.dows.tdd.core.model.Book;
+import edu.eci.dows.tdd.core.model.Loan;
 import edu.eci.dows.tdd.core.model.User;
+import edu.eci.dows.tdd.core.service.BookService;
+import edu.eci.dows.tdd.core.service.LoanService;
+import edu.eci.dows.tdd.core.service.UserService;
+import edu.eci.dows.tdd.core.exception.LoanLimitExceededException;
 import edu.eci.dows.tdd.core.exception.BookNotAvailableException;
 import edu.eci.dows.tdd.core.exception.UserNotFoundException;
-import edu.eci.dows.tdd.core.exception.LoanLimitExceededException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/loans")
@@ -27,56 +29,58 @@ public class LoanController {
 
     @PostMapping
     public ResponseEntity<LoanDTO> addLoan(@RequestBody LoanDTO request) {
-        Book book = bookService.getBookById(request.getBookId());
-        if (book == null) {
-            throw new BookNotAvailableException("No existe el libro con id: " + request.getBookId());
+        try {
+            Book book = bookService.getBookById(request.getBookId()).orElseThrow();
+            User user = userService.getUserById(request.getUserId()).orElseThrow();
+            Loan loanToCreate = LoanMapper.toModel(request, book, user);
+            Loan loanCreated = loanService.addLoan(loanToCreate);
+            return new ResponseEntity<>(LoanMapper.toDTO(loanCreated), HttpStatus.CREATED);
+        } catch (BookNotAvailableException | UserNotFoundException | LoanLimitExceededException ex) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
-        User user = userService.getUserById(request.getUserId());
-        if (user == null) {
-            throw new UserNotFoundException("No existe el usuario con id: " + request.getUserId());
-        }
-        Loan loan = LoanMapper.toModel(request, book, user);
-        loanService.addLoan(loan);
-        return new ResponseEntity<>(LoanMapper.toDTO(loan), HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<java.util.List<LoanDTO>> getAllLoans() {
-        return ResponseEntity.ok(
-                loanService.getAllLoans().stream()
-                        .map(LoanMapper::toDTO)
-                        .toList()
-        );
+    public ResponseEntity<List<LoanDTO>> getAllLoans() {
+        List<LoanDTO> loans = loanService.getAllLoans().stream()
+                .map(LoanMapper::toDTO)
+                .toList();
+        return ResponseEntity.ok(loans);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<LoanDTO> getLoanById(@PathVariable String id) {
+        return loanService.getLoanById(id)
+                .map(LoanMapper::toDTO)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLoan(@PathVariable String id) {
-        Loan loan = loanService.getLoanById(id);
-        if (loan != null) {
-            loanService.deleteLoan(id);
-            return ResponseEntity.noContent().build();
-        } else {
-            throw new LoanLimitExceededException("No existe el préstamo con id: " + id);
+        if (loanService.getLoanById(id).isEmpty()) {
+            return ResponseEntity.notFound().build();
         }
+        loanService.deleteLoan(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<LoanDTO> updateLoan(@PathVariable String id, @RequestBody LoanDTO request) {
-        Loan existingLoan = loanService.getLoanById(id);
-        if (existingLoan == null) {
-            throw new LoanLimitExceededException("No existe el préstamo con id: " + id);
+        if (loanService.getLoanById(id).isEmpty()) {
+            return ResponseEntity.notFound().build();
         }
-        Book book = bookService.getBookById(request.getBookId());
-        if (book == null) {
-            throw new BookNotAvailableException("No existe el libro con id: " + request.getBookId());
+        try {
+            Book book = bookService.getBookById(request.getBookId()).orElseThrow();
+            User user = userService.getUserById(request.getUserId()).orElseThrow();
+            Loan updatedLoan = LoanMapper.toModel(request, book, user);
+            loanService.updateLoan(id, updatedLoan);
+            return loanService.getLoanById(id)
+                    .map(LoanMapper::toDTO)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (BookNotAvailableException | UserNotFoundException | LoanLimitExceededException ex) {
+            return ResponseEntity.badRequest().build();
         }
-        User user = userService.getUserById(request.getUserId());
-        if (user == null) {
-            throw new UserNotFoundException("No existe el usuario con id: " + request.getUserId());
-        }
-        Loan updatedLoan = LoanMapper.toModel(request, book, user);
-        updatedLoan.setId(id);
-        loanService.updateLoan(id, updatedLoan);
-        return ResponseEntity.ok(LoanMapper.toDTO(updatedLoan));
     }
 }

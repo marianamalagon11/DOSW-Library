@@ -2,87 +2,120 @@ package edu.eci.dows.DOSW_Library;
 
 import edu.eci.dows.tdd.core.model.Book;
 import edu.eci.dows.tdd.core.service.BookService;
+import edu.eci.dows.tdd.persistence.entity.BookEntity;
+import edu.eci.dows.tdd.persistence.repository.BookRepository;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class BookServiceTest {
     @Test
-    public void testAddAndGetBook() {
-        BookService service = new BookService();
-        Book b = new Book("El Quijote", "Cervantes", "1");
-        service.addBook(b, 2);
-        assertEquals(b, service.getBookById("1"));
-        assertTrue(service.isBookAvailable("1"));
+    public void testAddBookMapsAndReturnsSavedModel() {
+        BookRepository repository = mock(BookRepository.class);
+        BookService service = new BookService(repository);
+
+        Book input = new Book("El Quijote", "Cervantes", "1", 3, 2);
+        BookEntity saved = new BookEntity();
+        saved.setId("1");
+        saved.setTitle("El Quijote");
+        saved.setAuthor("Cervantes");
+        saved.setTotalStock(3);
+        saved.setAvailableStock(2);
+
+        when(repository.save(any(BookEntity.class))).thenReturn(saved);
+
+        Book result = service.addBook(input);
+
+        assertEquals("1", result.getId());
+        assertEquals("El Quijote", result.getTitle());
+        assertEquals(2, result.getAvailableStock());
     }
 
     @Test
-    public void testUpdateBookCount() {
-        BookService service = new BookService();
-        Book b = new Book("El Quijote", "Cervantes", "1");
-        service.addBook(b, 2);
-        service.updateBookCount("1", 0);
-        assertFalse(service.isBookAvailable("1"));
+    public void testGetAllBooksMapsFromRepository() {
+        BookRepository repository = mock(BookRepository.class);
+        BookService service = new BookService(repository);
+
+        BookEntity b1 = new BookEntity();
+        b1.setId("1");
+        b1.setTitle("A");
+        b1.setAuthor("AA");
+        b1.setTotalStock(2);
+        b1.setAvailableStock(1);
+
+        BookEntity b2 = new BookEntity();
+        b2.setId("2");
+        b2.setTitle("B");
+        b2.setAuthor("BB");
+        b2.setTotalStock(3);
+        b2.setAvailableStock(3);
+
+        when(repository.findAll()).thenReturn(List.of(b1, b2));
+
+        List<Book> result = service.getAllBooks();
+        assertEquals(2, result.size());
+        assertEquals("1", result.get(0).getId());
     }
 
     @Test
-    public void testGetAllBooks() {
-        BookService service = new BookService();
-        Book b1 = new Book("El Quijote", "Cervantes", "1");
-        Book b2 = new Book("La Odisea", "Homero", "2");
-        service.addBook(b1, 1);
-        service.addBook(b2, 2);
-        assertTrue(service.getAllBooks().contains(b1));
-        assertTrue(service.getAllBooks().contains(b2));
+    public void testGetBookByIdWhenFound() {
+        BookRepository repository = mock(BookRepository.class);
+        BookService service = new BookService(repository);
+
+        BookEntity entity = new BookEntity();
+        entity.setId("1");
+        entity.setTitle("El Quijote");
+        entity.setAuthor("Cervantes");
+        entity.setTotalStock(3);
+        entity.setAvailableStock(2);
+
+        when(repository.findById("1")).thenReturn(Optional.of(entity));
+
+        Optional<Book> result = service.getBookById("1");
+        assertTrue(result.isPresent());
+        assertEquals("1", result.get().getId());
     }
 
     @Test
-    public void testGetBookByIdWhenNotFoundReturnsNull() {
-        BookService service = new BookService();
-        assertNull(service.getBookById("404"));
+    public void testUpdateBookStockWhenBookExists() {
+        BookRepository repository = mock(BookRepository.class);
+        BookService service = new BookService(repository);
+
+        BookEntity entity = new BookEntity();
+        entity.setId("1");
+        entity.setTotalStock(3);
+        entity.setAvailableStock(2);
+
+        when(repository.findById("1")).thenReturn(Optional.of(entity));
+
+        service.updateBookStock("1", 10, 9);
+
+        assertEquals(10, entity.getTotalStock());
+        assertEquals(9, entity.getAvailableStock());
+        verify(repository).save(entity);
     }
 
     @Test
-    public void testUpdateBookCountWithUnknownIdDoesNotModifyExistingBooks() {
-        BookService service = new BookService();
-        Book b = new Book("El Quijote", "Cervantes", "1");
-        service.addBook(b, 2);
+    public void testIsBookAvailableWhenNotFoundReturnsFalse() {
+        BookRepository repository = mock(BookRepository.class);
+        BookService service = new BookService(repository);
 
-        service.updateBookCount("unknown", 0);
+        when(repository.findById("missing")).thenReturn(Optional.empty());
 
-        assertTrue(service.isBookAvailable("1"));
-    }
-
-    @Test
-    public void testIsBookAvailableWhenBookDoesNotExist() {
-        BookService service = new BookService();
         assertFalse(service.isBookAvailable("missing"));
     }
 
     @Test
-    public void testLombokGetterAndSetterForBooks() {
-        BookService service = new BookService();
-        Book book = new Book("1984", "Orwell", "B-1984");
-        Map<Book, Integer> customBooks = new HashMap<>();
-        customBooks.put(book, 5);
+    public void testDeleteBookDelegatesToRepository() {
+        BookRepository repository = mock(BookRepository.class);
+        BookService service = new BookService(repository);
 
-        service.setBooks(customBooks);
+        service.deleteBook("1");
 
-        assertEquals(customBooks, service.getBooks());
-        assertEquals(5, service.getBooks().get(book));
-    }
-
-    @Test
-    public void testLombokEqualsHashCodeAndToStringForBookService() {
-        BookService a = new BookService();
-        BookService b = new BookService();
-
-        assertEquals(a, b);
-        assertEquals(a.hashCode(), b.hashCode());
-        assertNotNull(a.toString());
-        assertTrue(a.toString().contains("books"));
+        verify(repository).deleteById("1");
     }
 }

@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -45,10 +46,13 @@ public class LoanControllerTest {
 
     @Test
     public void testAddLoanReturnsCreated() throws Exception {
-        Book book = new Book("1984", "Orwell", "B1");
+        Book book = new Book("1984", "Orwell", "B1", 10, 9);
         User user = new User("Maria", "U1");
-        when(bookService.getBookById("B1")).thenReturn(book);
-        when(userService.getUserById("U1")).thenReturn(user);
+        when(bookService.getBookById("B1")).thenReturn(Optional.of(book));
+        when(userService.getUserById("U1")).thenReturn(Optional.of(user));
+        when(loanService.addLoan(org.mockito.ArgumentMatchers.any(Loan.class))).thenReturn(
+                new Loan("L1", book, user, LocalDate.of(2026, 3, 1), "ACTIVE", null)
+        );
 
         LoanDTO request = new LoanDTO("L1", "B1", "U1", LocalDate.of(2026, 3, 1), "ACTIVE", null);
 
@@ -65,7 +69,7 @@ public class LoanControllerTest {
     public void testGetAllLoansReturnsOkWithList() throws Exception {
         Loan loan1 = new Loan(
                 "L2",
-                new Book("1984", "Orwell", "B1"),
+                new Book("1984", "Orwell", "B1", 10, 9),
                 new User("Maria", "U1"),
                 LocalDate.of(2026, 3, 1),
                 "ACTIVE",
@@ -73,7 +77,7 @@ public class LoanControllerTest {
         );
         Loan loan2 = new Loan(
                 "L3",
-                new Book("DDD", "Evans", "B2"),
+                new Book("DDD", "Evans", "B2", 8, 8),
                 new User("Ana", "U2"),
                 LocalDate.of(2026, 3, 2),
                 "RETURNED",

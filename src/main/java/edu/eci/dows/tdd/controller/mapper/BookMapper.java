@@ -35,4 +35,14 @@ public class BookMapper {
         );
     }
 
+    public static BookEntity toEntity(Book model) {
+        BookEntity entity = new BookEntity();
+        entity.setId(model.getId());
+        entity.setTitle(model.getTitle());
+        entity.setAuthor(model.getAuthor());
+        entity.setTotalStock(model.getTotalStock());
+        entity.setAvailableStock(model.getAvailableStock());
+        return entity;
+    }
+
 }

@@ -21,8 +21,8 @@ public class UserController {
     @PostMapping("/users")
     public ResponseEntity<UserDTO> addUser(@RequestBody UserDTO request) {
         User user = UserMapper.toModel(request);
-        userService.addUser(user);
-        return new ResponseEntity<>(UserMapper.toDTO(user), HttpStatus.CREATED);
+        User saved = userService.addUser(user);
+        return new ResponseEntity<>(UserMapper.toDTO(saved), HttpStatus.CREATED);
     }
 
     @GetMapping("/users")
@@ -36,18 +36,14 @@ public class UserController {
 
     @GetMapping("/users/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable String id) {
-        User user = userService.getUserById(id);
-        if (user != null) {
-            return ResponseEntity.ok(UserMapper.toDTO(user));
-        } else {
-            throw new UserNotFoundException("No existe el usuario con id: " + id);
-        }
+        return userService.getUserById(id)
+                .map(user -> ResponseEntity.ok(UserMapper.toDTO(user)))
+                .orElseThrow(() -> new UserNotFoundException("No existe el usuario con id: " + id));
     }
 
     @DeleteMapping("/users/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable String id) {
-        User user = userService.getUserById(id);
-        if (user != null) {
+        if (userService.getUserById(id).isPresent()) {
             userService.deleteUser(id);
             return ResponseEntity.noContent().build();
         } else {

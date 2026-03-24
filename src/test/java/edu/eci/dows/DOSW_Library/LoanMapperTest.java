@@ -17,7 +17,7 @@ public class LoanMapperTest {
     public void testToDTOMapsAllFields() {
         Loan loan = new Loan(
                 "L1",
-                new Book("1984", "Orwell", "B1"),
+                new Book("1984", "Orwell", "B1", 10, 9),
                 new User("Maria", "U1"),
                 LocalDate.of(2026, 3, 1),
                 "ACTIVE",
@@ -44,7 +44,7 @@ public class LoanMapperTest {
                 "RETURNED",
                 LocalDate.of(2026, 4, 10)
         );
-        Book book = new Book("DDD", "Evans", "B2");
+        Book book = new Book("DDD", "Evans", "B2", 7, 6);
         User user = new User("Ana", "U2");
 
         Loan loan = LoanMapper.toModel(dto, book, user);

@@ -7,14 +7,12 @@ import edu.eci.dows.tdd.core.model.Book;
 import edu.eci.dows.tdd.core.service.BookService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import jakarta.servlet.ServletException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -39,7 +37,9 @@ public class BookControllerTest {
 
     @Test
     public void testAddBookReturnsCreated() throws Exception {
-        BookDTO request = new BookDTO("B1", "Clean Code", "Robert C. Martin");
+        BookDTO request = new BookDTO("B1", "Clean Code", "Robert C. Martin", 8, 8);
+        when(bookService.addBook(org.mockito.ArgumentMatchers.any(Book.class)))
+                .thenReturn(new Book("Clean Code", "Robert C. Martin", "B1", 8, 8));
 
         mockMvc.perform(post("/books")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -47,25 +47,26 @@ public class BookControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value("B1"))
                 .andExpect(jsonPath("$.title").value("Clean Code"))
-                .andExpect(jsonPath("$.author").value("Robert C. Martin"));
+                .andExpect(jsonPath("$.author").value("Robert C. Martin"))
+                .andExpect(jsonPath("$.totalStock").value(8));
     }
 
     @Test
     public void testGetAllBooksReturnsOkWithList() throws Exception {
-        when(bookService.getAllBooks()).thenReturn(Set.of(
-                new Book("Clean Code", "Robert C. Martin", "B1"),
-                new Book("DDD", "Eric Evans", "B2")
+        when(bookService.getAllBooks()).thenReturn(List.of(
+                new Book("Clean Code", "Robert C. Martin", "B1", 6, 5),
+                new Book("DDD", "Eric Evans", "B2", 4, 4)
         ));
 
         mockMvc.perform(get("/books"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").exists())
-                .andExpect(jsonPath("$[1].id").exists());
+                .andExpect(jsonPath("$[0].id").value("B1"))
+                .andExpect(jsonPath("$[1].id").value("B2"));
     }
 
     @Test
     public void testGetBookByIdReturnsOkWhenExists() throws Exception {
-        when(bookService.getBookById("B1")).thenReturn(new Book("Clean Code", "Robert C. Martin", "B1"));
+        when(bookService.getBookById("B1")).thenReturn(Optional.of(new Book("Clean Code", "Robert C. Martin", "B1", 8, 7)));
 
         mockMvc.perform(get("/books/B1"))
                 .andExpect(status().isOk())
@@ -74,9 +75,10 @@ public class BookControllerTest {
     }
 
     @Test
-    public void testGetBookByIdReturnsNotFoundWhenMissing() throws Exception {
-        when(bookService.getBookById("B404")).thenReturn(null);
+    public void testGetBookByIdMissingReturnsServerError() throws Exception {
+        when(bookService.getBookById("B404")).thenReturn(Optional.empty());
 
-        assertThrows(ServletException.class, () -> mockMvc.perform(get("/books/B404")));
+        mockMvc.perform(get("/books/B404"))
+                .andExpect(status().is5xxServerError());
     }
 }

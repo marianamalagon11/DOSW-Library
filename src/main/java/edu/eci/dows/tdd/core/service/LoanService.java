@@ -1,61 +1,61 @@
 package edu.eci.dows.tdd.core.service;
 
-import edu.eci.dows.tdd.core.model.Book;
 import edu.eci.dows.tdd.core.model.Loan;
-import edu.eci.dows.tdd.core.model.User;
-import edu.eci.dows.tdd.
-        persistence.repository.LoanRepository;
+import edu.eci.dows.tdd.persistence.repository.LoanRepository;
+import edu.eci.dows.tdd.persistence.repository.BookRepository;
+import edu.eci.dows.tdd.persistence.repository.UserRepository;
+import edu.eci.dows.tdd.persistence.entity.LoanEntity;
+import edu.eci.dows.tdd.persistence.entity.BookEntity;
+import edu.eci.dows.tdd.persistence.entity.UserEntity;
+import edu.eci.dows.tdd.controller.mapper.LoanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class LoanService {
 
     private final LoanRepository loanRepository;
+    private final BookRepository bookRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public LoanService(LoanRepository loanRepository) {
+    public LoanService(LoanRepository loanRepository,
+                       BookRepository bookRepository,
+                       UserRepository userRepository) {
         this.loanRepository = loanRepository;
+        this.bookRepository = bookRepository;
+        this.userRepository = userRepository;
     }
 
     public Loan addLoan(Loan loan) {
-        return loanRepository.save(loan);
+        BookEntity bookEntity = bookRepository.findById(loan.getBook().getId()).orElseThrow();
+        UserEntity userEntity = userRepository.findById(loan.getUser().getId()).orElseThrow();
+        LoanEntity entity = LoanMapper.toEntity(loan, bookEntity, userEntity);
+        LoanEntity saved = loanRepository.save(entity);
+        return LoanMapper.toModel(saved);
     }
-
-    public List<Loan> getLoansByUser(User user) {
-        return loanRepository.findAll()
-                .stream()
-                .filter(loan -> loan.getUser().equals(user))
-                .collect(Collectors.toList());
-    }
-
     public List<Loan> getAllLoans() {
-        return loanRepository.findAll();
+        return loanRepository.findAll().stream()
+                .map(LoanMapper::toModel)
+                .toList();
     }
-
-    public List<Loan> getLoansByBook(Book book) {
-        return loanRepository.findAll()
-                .stream()
-                .filter(loan -> loan.getBook().equals(book))
-                .collect(Collectors.toList());
-    }
-
     public Optional<Loan> getLoanById(String id) {
-        return loanRepository.findById(id);
+        return loanRepository.findById(id).map(LoanMapper::toModel);
     }
-
     public void deleteLoan(String id) {
         loanRepository.deleteById(id);
     }
-
     public void updateLoan(String id, Loan updatedLoan) {
-        if (loanRepository.existsById(id)) {
-            updatedLoan.setId(id);
-            loanRepository.save(updatedLoan);
+        Optional<LoanEntity> entityOpt = loanRepository.findById(id);
+        if (entityOpt.isPresent()) {
+            BookEntity bookEntity = bookRepository.findById(updatedLoan.getBook().getId()).orElseThrow();
+            UserEntity userEntity = userRepository.findById(updatedLoan.getUser().getId()).orElseThrow();
+            LoanEntity entity = LoanMapper.toEntity(updatedLoan, bookEntity, userEntity);
+            entity.setId(id);
+            loanRepository.save(entity);
         }
     }
 }
