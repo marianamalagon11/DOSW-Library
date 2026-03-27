@@ -2,9 +2,9 @@ package edu.eci.dows.tdd.core.service;
 
 import edu.eci.dows.tdd.controller.dto.CreateUserRequestDTO;
 import edu.eci.dows.tdd.core.model.User;
-import edu.eci.dows.tdd.persistence.entity.UserEntity;
-import edu.eci.dows.tdd.persistence.entity.enums.UserRole;
-import edu.eci.dows.tdd.persistence.repository.UserRepository;
+import edu.eci.dows.tdd.persistence.relational.entity.UserEntity;
+import edu.eci.dows.tdd.persistence.relational.entity.enums.UserRole;
+import edu.eci.dows.tdd.persistence.relational.repository.UserRepository;
 import edu.eci.dows.tdd.controller.mapper.UserMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

@@ -2,9 +2,9 @@ package edu.eci.dows.DOSW_Library;
 
 import edu.eci.dows.tdd.core.model.Book;
 import edu.eci.dows.tdd.core.service.BookService;
-import edu.eci.dows.tdd.persistence.entity.BookEntity;
-import edu.eci.dows.tdd.persistence.repository.BookRepository;
-import edu.eci.dows.tdd.persistence.repository.LoanRepository;
+import edu.eci.dows.tdd.persistence.relational.entity.BookEntity;
+import edu.eci.dows.tdd.persistence.relational.repository.BookRepository;
+import edu.eci.dows.tdd.persistence.relational.repository.LoanRepository;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

@@ -1,8 +1,8 @@
 package edu.eci.dows.tdd.config;
 
-import edu.eci.dows.tdd.persistence.entity.UserEntity;
-import edu.eci.dows.tdd.persistence.entity.enums.UserRole;
-import edu.eci.dows.tdd.persistence.repository.UserRepository;
+import edu.eci.dows.tdd.persistence.relational.entity.UserEntity;
+import edu.eci.dows.tdd.persistence.relational.entity.enums.UserRole;
+import edu.eci.dows.tdd.persistence.relational.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;

@@ -4,9 +4,9 @@ import edu.eci.dows.tdd.core.model.Book;
 import edu.eci.dows.tdd.core.model.Loan;
 import edu.eci.dows.tdd.controller.dto.LoanDTO;
 import edu.eci.dows.tdd.core.model.User;
-import edu.eci.dows.tdd.persistence.entity.LoanEntity;
-import edu.eci.dows.tdd.persistence.entity.BookEntity;
-import edu.eci.dows.tdd.persistence.entity.UserEntity;
+import edu.eci.dows.tdd.persistence.relational.entity.LoanEntity;
+import edu.eci.dows.tdd.persistence.relational.entity.BookEntity;
+import edu.eci.dows.tdd.persistence.relational.entity.UserEntity;
 
 public class LoanMapper {
     public static LoanDTO toDTO(Loan loan) {

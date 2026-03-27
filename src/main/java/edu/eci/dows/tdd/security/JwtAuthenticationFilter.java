@@ -1,7 +1,7 @@
 package edu.eci.dows.tdd.security;
 
-import edu.eci.dows.tdd.persistence.entity.UserEntity;
-import edu.eci.dows.tdd.persistence.repository.UserRepository;
+import edu.eci.dows.tdd.persistence.relational.entity.UserEntity;
+import edu.eci.dows.tdd.persistence.relational.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

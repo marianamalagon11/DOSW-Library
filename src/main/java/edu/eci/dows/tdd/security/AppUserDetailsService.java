@@ -1,7 +1,7 @@
 package edu.eci.dows.tdd.security;
 
-import edu.eci.dows.tdd.persistence.entity.UserEntity;
-import edu.eci.dows.tdd.persistence.repository.UserRepository;
+import edu.eci.dows.tdd.persistence.relational.entity.UserEntity;
+import edu.eci.dows.tdd.persistence.relational.repository.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;

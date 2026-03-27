@@ -1,6 +1,6 @@
-package edu.eci.dows.tdd.persistence.entity;
+package edu.eci.dows.tdd.persistence.relational.entity;
 
-import edu.eci.dows.tdd.persistence.entity.enums.UserRole;
+import edu.eci.dows.tdd.persistence.relational.entity.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;

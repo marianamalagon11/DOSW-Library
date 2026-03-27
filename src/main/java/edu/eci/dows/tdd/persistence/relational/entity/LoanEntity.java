@@ -1,4 +1,4 @@
-package edu.eci.dows.tdd.persistence.entity;
+package edu.eci.dows.tdd.persistence.relational.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;

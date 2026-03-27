@@ -1,6 +1,6 @@
-package edu.eci.dows.tdd.persistence.repository;
+package edu.eci.dows.tdd.persistence.relational.repository;
 
-import edu.eci.dows.tdd.persistence.entity.LoanEntity;
+import edu.eci.dows.tdd.persistence.relational.entity.LoanEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

@@ -2,7 +2,7 @@ package edu.eci.dows.tdd.controller.mapper;
 
 import edu.eci.dows.tdd.controller.dto.BookDTO;
 import edu.eci.dows.tdd.core.model.Book;
-import edu.eci.dows.tdd.persistence.entity.BookEntity;
+import edu.eci.dows.tdd.persistence.relational.entity.BookEntity;
 
 public class BookMapper {
     public static Book toModel(BookDTO dto) {

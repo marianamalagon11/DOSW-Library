@@ -3,12 +3,12 @@ package edu.eci.dows.tdd.core.service;
 import edu.eci.dows.tdd.controller.mapper.LoanMapper;
 import edu.eci.dows.tdd.core.exception.BookNotAvailableException;
 import edu.eci.dows.tdd.core.model.Loan;
-import edu.eci.dows.tdd.persistence.entity.BookEntity;
-import edu.eci.dows.tdd.persistence.entity.LoanEntity;
-import edu.eci.dows.tdd.persistence.entity.UserEntity;
-import edu.eci.dows.tdd.persistence.repository.BookRepository;
-import edu.eci.dows.tdd.persistence.repository.LoanRepository;
-import edu.eci.dows.tdd.persistence.repository.UserRepository;
+import edu.eci.dows.tdd.persistence.relational.entity.BookEntity;
+import edu.eci.dows.tdd.persistence.relational.entity.LoanEntity;
+import edu.eci.dows.tdd.persistence.relational.entity.UserEntity;
+import edu.eci.dows.tdd.persistence.relational.repository.BookRepository;
+import edu.eci.dows.tdd.persistence.relational.repository.LoanRepository;
+import edu.eci.dows.tdd.persistence.relational.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

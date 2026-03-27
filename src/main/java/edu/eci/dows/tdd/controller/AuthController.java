@@ -1,8 +1,8 @@
 package edu.eci.dows.tdd.controller;
 
 import edu.eci.dows.tdd.controller.dto.*;
-import edu.eci.dows.tdd.persistence.entity.UserEntity;
-import edu.eci.dows.tdd.persistence.repository.UserRepository;
+import edu.eci.dows.tdd.persistence.relational.entity.UserEntity;
+import edu.eci.dows.tdd.persistence.relational.repository.UserRepository;
 import edu.eci.dows.tdd.security.JwtService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

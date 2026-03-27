@@ -3,9 +3,9 @@ package edu.eci.dows.DOSW_Library;
 import edu.eci.dows.tdd.controller.dto.CreateUserRequestDTO;
 import edu.eci.dows.tdd.core.model.User;
 import edu.eci.dows.tdd.core.service.UserService;
-import edu.eci.dows.tdd.persistence.entity.UserEntity;
-import edu.eci.dows.tdd.persistence.entity.enums.UserRole;
-import edu.eci.dows.tdd.persistence.repository.UserRepository;
+import edu.eci.dows.tdd.persistence.relational.entity.UserEntity;
+import edu.eci.dows.tdd.persistence.relational.entity.enums.UserRole;
+import edu.eci.dows.tdd.persistence.relational.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.password.PasswordEncoder;
 

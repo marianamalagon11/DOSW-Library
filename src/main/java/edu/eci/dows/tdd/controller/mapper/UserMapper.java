@@ -2,7 +2,7 @@ package edu.eci.dows.tdd.controller.mapper;
 
 import edu.eci.dows.tdd.controller.dto.UserDTO;
 import edu.eci.dows.tdd.core.model.User;
-import edu.eci.dows.tdd.persistence.entity.UserEntity;
+import edu.eci.dows.tdd.persistence.relational.entity.UserEntity;
 
 public class UserMapper {
     public static UserDTO toDTO(User user) {
