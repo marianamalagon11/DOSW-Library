@@ -8,4 +8,6 @@ import lombok.AllArgsConstructor;
 public class UserDTO {
     private String id;
     private String name;
+    private String username;
+    private String role;
 }

@@ -7,4 +7,8 @@ import java.util.List;
 
 public interface LoanRepository extends JpaRepository<LoanEntity, String> {
     long countByBookIdAndStatusNotIn(String bookId, List<String> statuses);
+
+    List<LoanEntity> findAllByUser_Id(String userId);
+
+    boolean existsByIdAndUser_Id(String id, String userId);
 }

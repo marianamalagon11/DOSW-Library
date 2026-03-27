@@ -7,6 +7,7 @@ import edu.eci.dows.tdd.core.service.LoanService;
 import edu.eci.dows.tdd.persistence.entity.BookEntity;
 import edu.eci.dows.tdd.persistence.entity.LoanEntity;
 import edu.eci.dows.tdd.persistence.entity.UserEntity;
+import edu.eci.dows.tdd.persistence.entity.enums.UserRole;
 import edu.eci.dows.tdd.persistence.repository.BookRepository;
 import edu.eci.dows.tdd.persistence.repository.LoanRepository;
 import edu.eci.dows.tdd.persistence.repository.UserRepository;
@@ -28,7 +29,7 @@ public class LoanServiceTest {
         LoanService service = new LoanService(loanRepository, bookRepository, userRepository);
 
         Book modelBook = new Book("CA1", "Cien anios", "Gabo", 4, 3);
-        User modelUser = new User("U005", "Luis");
+        User modelUser = new User("U005", "Luis", "luis", "USER");
         Loan input = new Loan("L1", modelBook, modelUser, LocalDate.now(), "ACTIVE", null);
 
         BookEntity bookEntity = new BookEntity();
@@ -37,6 +38,9 @@ public class LoanServiceTest {
         bookEntity.setAvailableStock(3);
         UserEntity userEntity = new UserEntity();
         userEntity.setId("U005");
+        userEntity.setName("Luis");
+        userEntity.setUsername("luis");
+        userEntity.setRole(UserRole.USER);
 
         LoanEntity savedEntity = new LoanEntity();
         savedEntity.setId("L1");
@@ -65,6 +69,9 @@ public class LoanServiceTest {
         book.setId("R1");
         UserEntity user = new UserEntity();
         user.setId("U1");
+        user.setName("Ana");
+        user.setUsername("ana");
+        user.setRole(UserRole.USER);
 
         LoanEntity l1 = new LoanEntity();
         l1.setId("L2");
@@ -92,6 +99,9 @@ public class LoanServiceTest {
         book.setId("R1");
         UserEntity user = new UserEntity();
         user.setId("U1");
+        user.setName("Ana");
+        user.setUsername("ana");
+        user.setRole(UserRole.USER);
 
         LoanEntity entity = new LoanEntity();
         entity.setId("L4");
@@ -121,10 +131,13 @@ public class LoanServiceTest {
         bookEntity.setId("B1");
         UserEntity userEntity = new UserEntity();
         userEntity.setId("U1");
+        userEntity.setName("Ana");
+        userEntity.setUsername("ana");
+        userEntity.setRole(UserRole.USER);
         when(bookRepository.findById("B1")).thenReturn(Optional.of(bookEntity));
         when(userRepository.findById("U1")).thenReturn(Optional.of(userEntity));
 
-        Loan updated = new Loan("other", new Book("B1", "1984", "Orwell", 10, 9), new User("U1", "Ana"), LocalDate.now(), "ACTIVE", null);
+        Loan updated = new Loan("other", new Book("B1", "1984", "Orwell", 10, 9), new User("U1", "Ana", "ana", "USER"), LocalDate.now(), "ACTIVE", null);
         service.updateLoan("L6", updated);
 
         verify(loanRepository).save(any(LoanEntity.class));

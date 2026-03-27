@@ -11,22 +11,26 @@ public class UserMapperTest {
 
     @Test
     public void testToDTOMapsAllFields() {
-        User user = new User("U1", "Maria");
+        User user = new User("U1", "Maria", "maria", "USER");
 
         UserDTO dto = UserMapper.toDTO(user);
 
         assertEquals("U1", dto.getId());
         assertEquals("Maria", dto.getName());
+        assertEquals("maria", dto.getUsername());
+        assertEquals("USER", dto.getRole());
     }
 
     @Test
     public void testToModelMapsAllFields() {
-        UserDTO dto = new UserDTO("U2", "Ana");
+        UserDTO dto = new UserDTO("U2", "Ana", "ana", "LIBRARIAN");
 
         User user = UserMapper.toModel(dto);
 
         assertEquals("U2", user.getId());
         assertEquals("Ana", user.getName());
+        assertEquals("ana", user.getUsername());
+        assertEquals("LIBRARIAN", user.getRole());
     }
 }
 

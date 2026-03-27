@@ -1,12 +1,13 @@
 package edu.eci.dows.tdd.controller;
 
+import edu.eci.dows.tdd.controller.dto.CreateUserRequestDTO;
 import edu.eci.dows.tdd.controller.dto.UserDTO;
 import edu.eci.dows.tdd.controller.mapper.UserMapper;
 import edu.eci.dows.tdd.core.service.UserService;
-import edu.eci.dows.tdd.core.model.User;
 import edu.eci.dows.tdd.core.exception.UserNotFoundException;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
+import jakarta.validation.Valid;
+import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
 
@@ -14,18 +15,20 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/users")
-    public ResponseEntity<UserDTO> addUser(@RequestBody UserDTO request) {
-        User user = UserMapper.toModel(request);
-        User saved = userService.addUser(user);
+    @PreAuthorize("hasRole('LIBRARIAN')")
+    @PostMapping
+    public ResponseEntity<UserDTO> addUser(@Valid @RequestBody CreateUserRequestDTO request) {
+        var saved = userService.createUser(request);
         return new ResponseEntity<>(UserMapper.toDTO(saved), HttpStatus.CREATED);
     }
 
-    @GetMapping("/users")
+    @PreAuthorize("hasRole('LIBRARIAN')")
+    @GetMapping
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         return ResponseEntity.ok(
                 userService.getAllUsers().stream()
@@ -34,20 +37,21 @@ public class UserController {
         );
     }
 
-    @GetMapping("/users/{id}")
+    @PreAuthorize("hasRole('LIBRARIAN')")
+    @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable String id) {
         return userService.getUserById(id)
                 .map(user -> ResponseEntity.ok(UserMapper.toDTO(user)))
                 .orElseThrow(() -> new UserNotFoundException("No existe el usuario con id: " + id));
     }
 
-    @DeleteMapping("/users/{id}")
+    @PreAuthorize("hasRole('LIBRARIAN')")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable String id) {
         if (userService.getUserById(id).isPresent()) {
             userService.deleteUser(id);
             return ResponseEntity.noContent().build();
-        } else {
-            throw new UserNotFoundException("No existe el usuario con id: " + id);
         }
+        throw new UserNotFoundException("No existe el usuario con id: " + id);
     }
 }

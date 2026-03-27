@@ -15,7 +15,7 @@ public class LoanModelTest {
     public void testNoArgsConstructorAndSetters() {
         Loan loan = new Loan("L1", null, null, null, null, null);
         Book book = new Book("1984", "Orwell", "B1", 10, 9);
-        User user = new User("Maria", "U1");
+        User user = new User("U1", "Maria", "maria", "USER");
         LocalDate loanDate = LocalDate.now();
         LocalDate returnDate = loanDate.plusDays(7);
 
@@ -35,7 +35,7 @@ public class LoanModelTest {
     @Test
     public void testAllArgsConstructorEqualsHashCodeAndToString() {
         Book book = new Book("1984", "Orwell", "B1", 10, 9);
-        User user = new User("Maria", "U1");
+        User user = new User("U1", "Maria", "maria", "USER");
         LocalDate loanDate = LocalDate.now();
 
         Loan a = new Loan("L2", book, user, loanDate, "ACTIVE", null);
@@ -50,7 +50,7 @@ public class LoanModelTest {
     @Test
     public void testEqualsWithDifferentStatusReturnsFalse() {
         Book book = new Book("1984", "Orwell", "B1", 10, 9);
-        User user = new User("Maria", "U1");
+        User user = new User("U1", "Maria", "maria", "USER");
         LocalDate loanDate = LocalDate.now();
 
         Loan a = new Loan("L3", book, user, loanDate, "ACTIVE", null);

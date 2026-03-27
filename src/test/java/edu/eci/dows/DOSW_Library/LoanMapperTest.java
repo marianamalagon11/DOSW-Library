@@ -18,7 +18,7 @@ public class LoanMapperTest {
         Loan loan = new Loan(
                 "L1",
                 new Book("B1", "1984", "Orwell", 10, 9),
-                new User("U1", "Maria"),
+                new User("U1", "Maria", "maria", "USER"),
                 LocalDate.of(2026, 3, 1),
                 "ACTIVE",
                 LocalDate.of(2026, 3, 15)
@@ -45,7 +45,7 @@ public class LoanMapperTest {
                 LocalDate.of(2026, 4, 10)
         );
         Book book = new Book("DDD", "Evans", "B2", 7, 6);
-        User user = new User("Ana", "U2");
+        User user = new User("U2", "Ana", "ana", "USER");
 
         Loan loan = LoanMapper.toModel(dto, book, user);
 

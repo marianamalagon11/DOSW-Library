@@ -14,7 +14,7 @@ public class LoanValidatorTest {
 
     @Test
     public void testIsValidWithCorrectLoanReturnsTrue() {
-        Loan loan = new Loan("L1", new Book("1984", "Orwell", "B1", 10, 9), new User("Maria", "U1"), LocalDate.now(), "ACTIVE", null);
+        Loan loan = new Loan("L1", new Book("1984", "Orwell", "B1", 10, 9), new User("U1", "Maria", "maria", "USER"), LocalDate.now(), "ACTIVE", null);
         assertTrue(LoanValidator.isValid(loan));
     }
 
@@ -25,7 +25,7 @@ public class LoanValidatorTest {
 
     @Test
     public void testIsValidWithMissingRequiredFieldsReturnsFalse() {
-        User user = new User("Maria", "U1");
+        User user = new User("U1", "Maria", "maria", "USER");
         Book book = new Book("1984", "Orwell", "B1", 10, 9);
 
         assertFalse(LoanValidator.isValid(new Loan("L2", null, user, LocalDate.now(), "ACTIVE", null)));

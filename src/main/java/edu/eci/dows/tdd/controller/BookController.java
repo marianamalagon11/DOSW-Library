@@ -2,13 +2,13 @@ package edu.eci.dows.tdd.controller;
 
 import edu.eci.dows.tdd.controller.dto.BookDTO;
 import edu.eci.dows.tdd.controller.mapper.BookMapper;
-import edu.eci.dows.tdd.core.service.BookService;
 import edu.eci.dows.tdd.core.exception.BookNotAvailableException;
 import edu.eci.dows.tdd.core.model.Book;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import edu.eci.dows.tdd.core.service.BookService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,6 +19,7 @@ public class BookController {
 
     private final BookService bookService;
 
+    @PreAuthorize("hasRole('LIBRARIAN')")
     @PostMapping
     public ResponseEntity<BookDTO> addBook(@RequestBody BookDTO request) {
         Book book = BookMapper.toModel(request);
@@ -26,6 +27,7 @@ public class BookController {
         return new ResponseEntity<>(BookMapper.toDTO(saved), HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasAnyRole('USER','LIBRARIAN')")
     @GetMapping
     public ResponseEntity<List<BookDTO>> getAllBooks() {
         return ResponseEntity.ok(
@@ -35,6 +37,7 @@ public class BookController {
         );
     }
 
+    @PreAuthorize("hasAnyRole('USER','LIBRARIAN')")
     @GetMapping("/{id}")
     public ResponseEntity<BookDTO> getBookById(@PathVariable String id) {
         return bookService.getBookById(id)
@@ -42,16 +45,17 @@ public class BookController {
                 .orElseThrow(() -> new BookNotAvailableException("No existe el libro con id: " + id));
     }
 
+    @PreAuthorize("hasRole('LIBRARIAN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBook(@PathVariable String id) {
         if (bookService.getBookById(id).isPresent()) {
             bookService.deleteBook(id);
             return ResponseEntity.noContent().build();
-        } else {
-            throw new BookNotAvailableException("No existe el libro con id: " + id);
         }
+        throw new BookNotAvailableException("No existe el libro con id: " + id);
     }
 
+    @PreAuthorize("hasRole('LIBRARIAN')")
     @PutMapping("/{id}")
     public ResponseEntity<BookDTO> updateBook(@PathVariable String id, @RequestBody BookDTO request) {
         Book updatedBook = BookMapper.toModel(request);

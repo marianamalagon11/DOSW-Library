@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/dosw_library
+    username: postgres
+    password: mari2005
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+security:
+  jwt:
+    secret: "HOLA_ESTE_ES_EL_SECRET_QUE_FIRMA_JWT_2026_ABCDEF123456"
+    ttl-ms: 3600000
+
+server:
+  port: 8443
+  ssl:
+    enabled: true
+    key-store: classpath:keystore/dosw-library.p12
+    key-store-password: mari2005
+    key-store-type: PKCS12
+    key-alias: dosw-library

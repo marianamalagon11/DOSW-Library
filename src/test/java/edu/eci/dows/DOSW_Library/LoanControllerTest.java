@@ -47,7 +47,7 @@ public class LoanControllerTest {
     @Test
     public void testAddLoanReturnsCreated() throws Exception {
         Book book = new Book("B1", "1984", "Orwell", 10, 9);
-        User user = new User("U1", "Maria");
+        User user = new User("U1", "Maria", "maria", "USER");
         when(bookService.getBookById("B1")).thenReturn(Optional.of(book));
         when(userService.getUserById("U1")).thenReturn(Optional.of(user));
         when(loanService.addLoan(org.mockito.ArgumentMatchers.any(Loan.class))).thenReturn(
@@ -70,7 +70,7 @@ public class LoanControllerTest {
         Loan loan1 = new Loan(
                 "L2",
                 new Book("B1", "1984", "Orwell", 10, 9),
-                new User("U1", "Maria"),
+                new User("U1", "Maria", "maria", "USER"),
                 LocalDate.of(2026, 3, 1),
                 "ACTIVE",
                 null
@@ -78,7 +78,7 @@ public class LoanControllerTest {
         Loan loan2 = new Loan(
                 "L3",
                 new Book("B2", "DDD", "Evans", 8, 8),
-                new User("U2", "Ana"),
+                new User("U2", "Ana", "ana", "USER"),
                 LocalDate.of(2026, 3, 2),
                 "RETURNED",
                 LocalDate.of(2026, 3, 10)

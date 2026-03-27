@@ -2,7 +2,7 @@ package edu.eci.dows.DOSW_Library;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.eci.dows.tdd.controller.UserController;
-import edu.eci.dows.tdd.controller.dto.UserDTO;
+import edu.eci.dows.tdd.controller.dto.CreateUserRequestDTO;
 import edu.eci.dows.tdd.core.exception.GlobalExceptionHandler;
 import edu.eci.dows.tdd.core.model.User;
 import edu.eci.dows.tdd.core.service.UserService;
@@ -40,23 +40,25 @@ public class UserControllerTest {
 
     @Test
     public void testAddUserReturnsCreated() throws Exception {
-        UserDTO request = new UserDTO("U1", "Maria");
-        when(userService.addUser(org.mockito.ArgumentMatchers.any(User.class)))
-                .thenReturn(new User("U1", "Maria"));
+        CreateUserRequestDTO request = new CreateUserRequestDTO("U1", "Maria", "maria", "1234", "USER");
+        when(userService.createUser(org.mockito.ArgumentMatchers.any(CreateUserRequestDTO.class)))
+                .thenReturn(new User("U1", "Maria", "maria", "USER"));
 
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value("U1"))
-                .andExpect(jsonPath("$.name").value("Maria"));
+                .andExpect(jsonPath("$.name").value("Maria"))
+                .andExpect(jsonPath("$.username").value("maria"))
+                .andExpect(jsonPath("$.role").value("USER"));
     }
 
     @Test
     public void testGetAllUsersReturnsOkWithList() throws Exception {
         when(userService.getAllUsers()).thenReturn(List.of(
-                new User("U1", "Maria"),
-                new User("U2", "Ana")
+                new User("U1", "Maria", "maria", "USER"),
+                new User("U2", "Ana", "ana", "LIBRARIAN")
         ));
 
         mockMvc.perform(get("/users"))
@@ -67,7 +69,7 @@ public class UserControllerTest {
 
     @Test
     public void testGetUserByIdReturnsOkWhenExists() throws Exception {
-        when(userService.getUserById("U1")).thenReturn(Optional.of(new User("U1", "Maria")));
+        when(userService.getUserById("U1")).thenReturn(Optional.of(new User("U1", "Maria", "maria", "USER")));
 
         mockMvc.perform(get("/users/U1"))
                 .andExpect(status().isOk())

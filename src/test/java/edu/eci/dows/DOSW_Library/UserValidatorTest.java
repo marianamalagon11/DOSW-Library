@@ -10,7 +10,7 @@ public class UserValidatorTest {
 
     @Test
     public void testIsValidWithCorrectUserReturnsTrue() {
-        assertTrue(UserValidator.isValid(new User("Maria", "U1")));
+        assertTrue(UserValidator.isValid(new User("U1", "Maria", "maria", "USER")));
     }
 
     @Test
@@ -20,9 +20,10 @@ public class UserValidatorTest {
 
     @Test
     public void testIsValidWithMissingFieldsReturnsFalse() {
-        assertFalse(UserValidator.isValid(new User("", "U1")));
-        assertFalse(UserValidator.isValid(new User("Maria", "")));
-        assertFalse(UserValidator.isValid(new User(null, "U1")));
+        assertFalse(UserValidator.isValid(new User("", "Maria", "maria", "USER")));
+        assertFalse(UserValidator.isValid(new User("U1", "", "maria", "USER")));
+        assertFalse(UserValidator.isValid(new User("U1", "Maria", "", "USER")));
+        assertFalse(UserValidator.isValid(new User("U1", "Maria", "maria", "")));
     }
 }
 

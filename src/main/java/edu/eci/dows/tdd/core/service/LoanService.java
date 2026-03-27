@@ -1,15 +1,14 @@
 package edu.eci.dows.tdd.core.service;
 
-import edu.eci.dows.tdd.core.model.Loan;
-import edu.eci.dows.tdd.persistence.repository.LoanRepository;
-import edu.eci.dows.tdd.persistence.repository.BookRepository;
-import edu.eci.dows.tdd.persistence.repository.UserRepository;
-import edu.eci.dows.tdd.persistence.entity.LoanEntity;
-import edu.eci.dows.tdd.persistence.entity.BookEntity;
-import edu.eci.dows.tdd.persistence.entity.UserEntity;
 import edu.eci.dows.tdd.controller.mapper.LoanMapper;
 import edu.eci.dows.tdd.core.exception.BookNotAvailableException;
-import org.springframework.beans.factory.annotation.Autowired;
+import edu.eci.dows.tdd.core.model.Loan;
+import edu.eci.dows.tdd.persistence.entity.BookEntity;
+import edu.eci.dows.tdd.persistence.entity.LoanEntity;
+import edu.eci.dows.tdd.persistence.entity.UserEntity;
+import edu.eci.dows.tdd.persistence.repository.BookRepository;
+import edu.eci.dows.tdd.persistence.repository.LoanRepository;
+import edu.eci.dows.tdd.persistence.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,7 +21,6 @@ public class LoanService {
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
 
-    @Autowired
     public LoanService(LoanRepository loanRepository,
                        BookRepository bookRepository,
                        UserRepository userRepository) {
@@ -49,6 +47,16 @@ public class LoanService {
         return loanRepository.findAll().stream()
                 .map(LoanMapper::toModel)
                 .toList();
+    }
+
+    public List<Loan> getLoansByUserId(String userId) {
+        return loanRepository.findAllByUser_Id(userId).stream()
+                .map(LoanMapper::toModel)
+                .toList();
+    }
+
+    public boolean loanBelongsToUser(String loanId, String userId) {
+        return loanRepository.existsByIdAndUser_Id(loanId, userId);
     }
 
     public Optional<Loan> getLoanById(String id) {
