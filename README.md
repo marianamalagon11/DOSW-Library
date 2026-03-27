@@ -105,3 +105,10 @@ Se inyecta el repositorio correspondiente en cada servicio mediante constructor.
 
 Link video demo:
 https://youtu.be/CaZvytN92rA
+
+### Seguridad:
+- Se implementó seguridad básica con Spring Security, utilizando autenticación en memoria para usuarios y roles
+- Se configuraron roles y permisos para proteger los endpoints, asegurando que solo usuarios autenticados puedan acceder a ciertas funcionalidades.
+- Se realizaron pruebas de seguridad para verificar que los endpoints estén protegidos correctamente y que los usuarios sin autenticación no puedan acceder a recursos restringidos.
+- Link vídeo:
+  https://youtu.be/ptfhepP-HUw
