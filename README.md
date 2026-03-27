@@ -43,7 +43,7 @@ Las flechas indican las relaciones entre clases: un Loan siempre está vinculado
 
 
 ### Modelo entidad-relación
-![entidadRelacion.png](images/entidadRelacion.png)
+![modeloEntidadRelacion.png](images/modeloEntidadRelacion.png)
 
 El modelo se encuentra en tercera forma normal ya que todas las tablas poseen clave primaria, no hay datos redundantes, y no existen dependencias transitivas. Las relaciones son de agregación, permitiendo la independencia de Book y User si se elimina un Loan.
 
