@@ -22,7 +22,7 @@ Library Front simboliza la capa de presentación, es decir, la interfaz a travé
 
 ---
 ### Diagrama de componentes especifico de la biblioteca
-![dComponetesEspecífico.png](images/dComponetesEspec%C3%ADfico.png)
+![diagramCompEspc.png](images/diagramCompEspc.png)
 
 En este diagrama se detalla cómo se conectan los componentes internos para cada flujo.
 Los controladores (UserController, BookController, LoanController) reciben las solicitudes desde el exterior y manejan los DTOs. Los controladores redirigen las operaciones a los servicios (UserService, BookService, LoanService), los cuales contienen las reglas y validaciones de negocio.
@@ -32,7 +32,7 @@ Este diseño modular promueve la mantenibilidad y la correcta separación de res
 
 ---
 ### Diagrama de clases
-![diagamaClases.png](images/diagamaClases.png)
+![diagrmClaes.png](images/diagrmClaes.png)
 
 Este diagrama muestra las principales entidades del sistema:
 
