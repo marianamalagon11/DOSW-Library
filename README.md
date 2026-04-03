@@ -187,10 +187,14 @@ server.port=${PORT:8080}
 
 ### 4) Configuración de base de datos por variables de entorno (MongoDB)
 1. En Azure App Service → **Configuration → Application settings** se creó la variable:
-   `SPRING_DATA_MONGODB_URI` = `<URI de conexión a MongoDB>`
-2. (Opcional según configuración del proyecto) en `application.properties` se referencia la variable:
+
+![varAzure.png](images/varAzure.png)
+
+2. En application.yml se referencia la variable:
 
 spring.data.mongodb.uri=${SPRING_DATA_MONGODB_URI}
+En Mongo tambien se tuvo que habilitar otra ip:
+![ipMongo.png](images/ipMongo.png)
 
 3. Se guardó la configuración y se reinició la aplicación para aplicar los cambios.
 
@@ -198,9 +202,9 @@ spring.data.mongodb.uri=${SPRING_DATA_MONGODB_URI}
 - Se verificó el estado del despliegue en:
     - **GitHub → Actions** (logs del workflow de deploy)
     - **Azure → Log stream** (logs de ejecución de la aplicación)
-- Se probó la aplicación accediendo al dominio `https://<app-name>.azurewebsites.net` y realizando pruebas funcionales.
+- Se probó la aplicación accediendo al dominio y realizando pruebas funcionales.
 
-### 6) Evidencia (video)
+### 6) Video
 Se grabó un video mostrando:
 - Workflow de deploy en GitHub Actions en estado exitoso (verde)
 - Aplicación desplegada en Azure funcionando en la URL del App Service
