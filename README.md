@@ -187,11 +187,11 @@ server.port=${PORT:8080}
 
 ### 4) Configuración de base de datos por variables de entorno (MongoDB)
 1. En Azure App Service → **Configuration → Application settings** se creó la variable:
-    - `SPRING_DATA_MONGODB_URI` = `<URI de conexión a MongoDB>`
+   `SPRING_DATA_MONGODB_URI` = `<URI de conexión a MongoDB>`
 2. (Opcional según configuración del proyecto) en `application.properties` se referencia la variable:
-```properties
+
 spring.data.mongodb.uri=${SPRING_DATA_MONGODB_URI}
-```
+
 3. Se guardó la configuración y se reinició la aplicación para aplicar los cambios.
 
 ### 5) Verificación y logs

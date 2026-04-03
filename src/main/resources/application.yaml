@@ -2,22 +2,6 @@ spring:
   profiles:
     active: mongo
 
-  datasource:
-    url: jdbc:postgresql://localhost:5432/dosw_library
-    username: postgres
-    password: mari2005
-    driver-class-name: org.postgresql.Driver
-
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-
-  data:
-    mongodb:
-      uri: ${SPRING_DATA_MONGODB_URI:mongodb+srv://libraryUser:mari2005@cluster0.0lddgr2.mongodb.net/library?retryWrites=true&w=majority&appName=Cluster0}
-
 security:
   jwt:
     secret: ${JWT_SECRET:HOLA_ESTE_ES_EL_SECRET_QUE_FIRMA_JWT_2026_ABCDEF123456}
