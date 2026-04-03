@@ -117,3 +117,10 @@ https://youtu.be/CaZvytN92rA
 - Se realizaron pruebas de seguridad para verificar que los endpoints estén protegidos correctamente y que los usuarios sin autenticación no puedan acceder a recursos restringidos.
 - Link vídeo:
   https://youtu.be/ptfhepP-HUw
+
+### No relacional:
+- Se implementó la persistencia utilizando MongoDB.
+- Se configuró la conexión a MongoDB y se crearon los repositorios necesarios para gestionar las entidades Book, User y Loan.
+- Se realizaron pruebas para verificar que los datos se almacenan y recuperan correctamente desde MongoDB, asegurando la integridad de los datos y el correcto funcionamiento de la aplicación con la nueva capa de persistencia.
+- Link vídeo:
+  https://youtu.be/NuclClEzc0g
