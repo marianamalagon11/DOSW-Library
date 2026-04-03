@@ -145,3 +145,66 @@ Casos cubiertos:
 - Con 1 préstamo registrado, al eliminar y luego consultar, no se retorna ningún resultado.
 
 ![testReto6.png](images/testReto6.png)
+
+### Reto #7 — Despliegue en Azure App Service (CD)
+
+### 1) Creación del App Service (costo $0)
+1. En Azure Portal se creó un recurso Aplicación web (App Service).
+2. Se seleccionó:
+    - **Publicar:** Código
+    - **Sistema operativo:** Linux
+    - **Pila del entorno en tiempo de ejecución:** Java 21 (Java SE / Embedded Web Server)
+    - **Plan de precios:** **Gratis F1 (infraestructura compartida)** para garantizar costo $0
+3. Se verificó que el recurso quedara creado correctamente en una región permitida por la suscripción (Azure for Students).
+
+### 2) Configuración de despliegue automático con GitHub Actions
+1. En el App Service se ingresó a **Centro de implementación (Deployment Center)**.
+2. Se seleccionó:
+    - **Proveedor:** GitHub
+    - **Repositorio:** `DOSW-Library`
+    - **Rama:** `develop`
+3. En **Opción de flujo de trabajo** se eligió **“Agregar un flujo de trabajo”** para que Azure generara el archivo YAML de despliegue en el repositorio.
+4. En autenticación se usó **Identidad asignada por el usuario (OIDC)**.
+![confAzure.png](images/confAzure.png)
+![gitAzure.png](images/gitAzure.png)
+
+Primer error:
+![primerError.png](images/primerError.png)
+Efectivamente lo que decía el enunciado:
+4. En este punto la aplicación no debería funcionar, ¿Donde puedes ver el mensaje de
+   error de la aplicación o logs?, (probáblemente está fallando debido a que el puerto
+   usado para despliegue no es el esperado (puerto 80), modifícalo en el
+   application.properties)
+   R/. El mensaje de error y los logs se pueden ver en Azure Portal → App Service → Supervisión → “Secuencia de registro (Log stream)” y también en GitHub → Actions (logs del workflow de despliegue).
+   La falla ocurre porque el puerto esperado por Azure no es 80; Azure asigna el puerto por la variable de entorno PORT (usualmente 8080). 
+    ![logAzure.png](images/logAzure.png)
+
+### 3) Corrección de puerto para ejecución en Azure
+- En src/main/resources/application.yaml:
+
+server.port=${PORT:8080}
+
+
+### 4) Configuración de base de datos por variables de entorno (MongoDB)
+1. En Azure App Service → **Configuration → Application settings** se creó la variable:
+    - `SPRING_DATA_MONGODB_URI` = `<URI de conexión a MongoDB>`
+2. (Opcional según configuración del proyecto) en `application.properties` se referencia la variable:
+```properties
+spring.data.mongodb.uri=${SPRING_DATA_MONGODB_URI}
+```
+3. Se guardó la configuración y se reinició la aplicación para aplicar los cambios.
+
+### 5) Verificación y logs
+- Se verificó el estado del despliegue en:
+    - **GitHub → Actions** (logs del workflow de deploy)
+    - **Azure → Log stream** (logs de ejecución de la aplicación)
+- Se probó la aplicación accediendo al dominio `https://<app-name>.azurewebsites.net` y realizando pruebas funcionales.
+
+### 6) Evidencia (video)
+Se grabó un video mostrando:
+- Workflow de deploy en GitHub Actions en estado exitoso (verde)
+- Aplicación desplegada en Azure funcionando en la URL del App Service
+- Pruebas funcionales realizadas contra la aplicación desplegada
+
+**URL App Service:** `https://<app-name>.azurewebsites.net`  
+**Video:** `<link del video>`

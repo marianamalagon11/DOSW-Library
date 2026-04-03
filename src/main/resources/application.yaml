@@ -16,18 +16,14 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb+srv://libraryUser:mari2005@cluster0.0lddgr2.mongodb.net/library?retryWrites=true&w=majority&appName=Cluster0
+      uri: ${SPRING_DATA_MONGODB_URI:mongodb+srv://libraryUser:mari2005@cluster0.0lddgr2.mongodb.net/library?retryWrites=true&w=majority&appName=Cluster0}
 
 security:
   jwt:
-    secret: "HOLA_ESTE_ES_EL_SECRET_QUE_FIRMA_JWT_2026_ABCDEF123456"
+    secret: ${JWT_SECRET:HOLA_ESTE_ES_EL_SECRET_QUE_FIRMA_JWT_2026_ABCDEF123456}
     ttl-ms: 3600000
 
 server:
-  port: 8443
+  port: ${PORT:8080}
   ssl:
-    enabled: true
-    key-store: classpath:keystore/dosw-library.p12
-    key-store-password: mari2005
-    key-store-type: PKCS12
-    key-alias: dosw-library
+    enabled: false
