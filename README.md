@@ -124,3 +124,24 @@ https://youtu.be/CaZvytN92rA
 - Se realizaron pruebas para verificar que los datos se almacenan y recuperan correctamente desde MongoDB, asegurando la integridad de los datos y el correcto funcionamiento de la aplicación con la nueva capa de persistencia.
 - Link vídeo:
   https://youtu.be/NuclClEzc0g
+
+
+### Reto 6: Worlflow de CI/CD:
+- Se configuró un workflow de CI/CD utilizando GitHub Actions para automatizar la construcción, pruebas y despliegue de la aplicación.
+- El workflow se ejecuta automáticamente en cada push o pull request, asegurando que el código se construya correctamente, que las pruebas se ejecuten y que cualquier error se detecte de inmediato
+- Pregunta: ¿ Se puede lograr que se ejecute sin necesidad de compilar el proyecto?
+- Respuesta: En Maven no es posible ejecutar correctamente la fase verify (ni test) sin que se ejecute la compilación, porque verify incluye fases previas del ciclo de vida como compile y test-compile. Por tanto, test y analysis dependen del job build que asegura la compilación antes de ejecutar pruebas y verificación.
+- Prueba 1:
+
+![resultadoPR.png](images/resultadoPR.png)
+- Parte 2: Tests:
+Se agregaron pruebas unitarias a nivel de servicio para la funcionalidad de “reservas” (préstamos):
+
+Casos cubiertos:
+- Con 1 préstamo registrado, al consultar el servicio se valida el id.
+- Sin préstamos registrados, al consultar el servicio retorna una lista vacía.
+- Sin préstamos registrados, al eliminar en el servicio la operación es exitosa (no lanza error).
+- Con 1 préstamo registrado, al eliminar en el servicio la eliminación es exitosa.
+- Con 1 préstamo registrado, al eliminar y luego consultar, no se retorna ningún resultado.
+
+![testReto6.png](images/testReto6.png)
