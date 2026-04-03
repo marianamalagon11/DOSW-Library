@@ -1,6 +1,6 @@
 package edu.eci.dows.tdd.persistence.norelational.repository;
 
-import edu.eci.dows.tdd.persistence.nonrelational.document.UserDocument;
+import edu.eci.dows.tdd.persistence.norelational.document.UserDocument;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;

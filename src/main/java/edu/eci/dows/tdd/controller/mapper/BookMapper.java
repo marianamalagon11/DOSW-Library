@@ -2,47 +2,70 @@ package edu.eci.dows.tdd.controller.mapper;
 
 import edu.eci.dows.tdd.controller.dto.BookDTO;
 import edu.eci.dows.tdd.core.model.Book;
-import edu.eci.dows.tdd.persistence.relational.entity.BookEntity;
 
 public class BookMapper {
+
     public static Book toModel(BookDTO dto) {
+        Book.Metadata md = null;
+        if (dto.getMetadata() != null) {
+            md = new Book.Metadata(dto.getMetadata().getPages(), dto.getMetadata().getLanguage(), dto.getMetadata().getCompany());
+        }
+
+        Book.Availability av = null;
+        if (dto.getAvailability() != null) {
+            av = new Book.Availability(
+                    dto.getAvailability().getStatus(),
+                    dto.getAvailability().getTotalCopies(),
+                    dto.getAvailability().getAvailableCopies(),
+                    dto.getAvailability().getBorrowedCopies()
+            );
+        }
+
         return new Book(
                 dto.getId(),
                 dto.getTitle(),
                 dto.getAuthor(),
                 dto.getTotalStock(),
-                dto.getAvailableStock()
+                dto.getAvailableStock(),
+                dto.getCategories(),
+                dto.getPublicationType(),
+                dto.getPublicationDate(),
+                dto.getIsbn(),
+                md,
+                av,
+                dto.getAddedAt()
         );
     }
 
     public static BookDTO toDTO(Book model) {
+        BookDTO.MetadataDTO md = null;
+        if (model.getMetadata() != null) {
+            md = new BookDTO.MetadataDTO(model.getMetadata().getPages(), model.getMetadata().getLanguage(), model.getMetadata().getCompany());
+        }
+
+        BookDTO.AvailabilityDTO av = null;
+        if (model.getAvailability() != null) {
+            av = new BookDTO.AvailabilityDTO(
+                    model.getAvailability().getStatus(),
+                    model.getAvailability().getTotalCopies(),
+                    model.getAvailability().getAvailableCopies(),
+                    model.getAvailability().getBorrowedCopies()
+            );
+        }
+
         return new BookDTO(
                 model.getId(),
                 model.getTitle(),
                 model.getAuthor(),
                 model.getTotalStock(),
-                model.getAvailableStock()
+                model.getAvailableStock(),
+                model.getCategories(),
+                model.getPublicationType(),
+                model.getPublicationDate(),
+                model.getIsbn(),
+                md,
+                av,
+                model.getAddedAt()
         );
     }
-
-    public static Book toModel(BookEntity entity) {
-        return new Book(
-                entity.getId(),
-                entity.getTitle(),
-                entity.getAuthor(),
-                entity.getTotalStock(),
-                entity.getAvailableStock()
-        );
-    }
-
-    public static BookEntity toEntity(Book model) {
-        BookEntity entity = new BookEntity();
-        entity.setId(model.getId());
-        entity.setTitle(model.getTitle());
-        entity.setAuthor(model.getAuthor());
-        entity.setTotalStock(model.getTotalStock());
-        entity.setAvailableStock(model.getAvailableStock());
-        return entity;
-    }
-
 }

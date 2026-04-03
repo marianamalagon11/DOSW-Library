@@ -9,9 +9,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class LoanDTOTest {
 
+    private LoanDTO newLoanDTO(String id, String bookId, String userId, LocalDate loanDate, String status, LocalDate returnDate) {
+        return new LoanDTO(id, bookId, userId, loanDate, status, returnDate, null);
+    }
+
     @Test
     public void testConstructorGettersAndSetters() {
-        LoanDTO dto = new LoanDTO("L1", "B1", "U1", LocalDate.of(2026, 3, 1), "ACTIVE", null);
+        LoanDTO dto = newLoanDTO("L1", "B1", "U1", LocalDate.of(2026, 3, 1), "ACTIVE", null);
 
         assertEquals("B1", dto.getBookId());
         assertEquals("U1", dto.getUserId());
@@ -34,9 +38,9 @@ public class LoanDTOTest {
 
     @Test
     public void testEqualsHashCodeAndToString() {
-        LoanDTO a = new LoanDTO("L1", "B1", "U1", LocalDate.of(2026, 3, 1), "ACTIVE", null);
-        LoanDTO b = new LoanDTO("L1", "B1", "U1", LocalDate.of(2026, 3, 1), "ACTIVE", null);
-        LoanDTO c = new LoanDTO("L2", "B2", "U2", LocalDate.of(2026, 3, 2), "RETURNED", LocalDate.of(2026, 3, 10));
+        LoanDTO a = newLoanDTO("L1", "B1", "U1", LocalDate.of(2026, 3, 1), "ACTIVE", null);
+        LoanDTO b = newLoanDTO("L1", "B1", "U1", LocalDate.of(2026, 3, 1), "ACTIVE", null);
+        LoanDTO c = newLoanDTO("L2", "B2", "U2", LocalDate.of(2026, 3, 2), "RETURNED", LocalDate.of(2026, 3, 10));
 
         assertEquals(a, b);
         assertEquals(a.hashCode(), b.hashCode());

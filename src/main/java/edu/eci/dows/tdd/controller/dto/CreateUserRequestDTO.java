@@ -21,4 +21,9 @@ public class CreateUserRequestDTO {
 
     @NotBlank
     private String role;
+
+    //para la no relacional
+    private String email;
+    private String membershipType;
+    private String addedAt;
 }

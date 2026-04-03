@@ -3,16 +3,25 @@ package edu.eci.dows.DOSW_Library;
 import edu.eci.dows.tdd.controller.dto.BookDTO;
 import edu.eci.dows.tdd.controller.mapper.BookMapper;
 import edu.eci.dows.tdd.core.model.Book;
-import edu.eci.dows.tdd.persistence.relational.entity.BookEntity;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class BookMapperTest {
 
+    private Book buildBook(String id, String title, String author, int totalStock, int availableStock) {
+        Book book = new Book();
+        book.setId(id);
+        book.setTitle(title);
+        book.setAuthor(author);
+        book.setTotalStock(totalStock);
+        book.setAvailableStock(availableStock);
+        return book;
+    }
+
     @Test
     public void testToDTOMapsAllFields() {
-        Book book = new Book("B1", "Clean Code", "Robert C. Martin", 10, 8);
+        Book book = buildBook("B1", "Clean Code", "Robert C. Martin", 10, 8);
 
         BookDTO dto = BookMapper.toDTO(book);
 
@@ -24,11 +33,9 @@ public class BookMapperTest {
     }
 
     @Test
-    public void testToEntityAndBackMapsAllFields() {
-        Book model = new Book("B2", "DDD", "Eric Evans", 12, 11);
-
-        BookEntity entity = BookMapper.toEntity(model);
-        Book book = BookMapper.toModel(entity);
+    public void testToModelMapsAllFields() {
+        BookDTO dto = new BookDTO("B2", "DDD", "Eric Evans", 12, 11, null, null, null, null, null, null, null);
+        Book book = BookMapper.toModel(dto);
 
         assertEquals("B2", book.getId());
         assertEquals("DDD", book.getTitle());

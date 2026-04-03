@@ -3,9 +3,7 @@ package edu.eci.dows.DOSW_Library;
 import edu.eci.dows.tdd.controller.dto.CreateUserRequestDTO;
 import edu.eci.dows.tdd.core.model.User;
 import edu.eci.dows.tdd.core.service.UserService;
-import edu.eci.dows.tdd.persistence.relational.entity.UserEntity;
-import edu.eci.dows.tdd.persistence.relational.entity.enums.UserRole;
-import edu.eci.dows.tdd.persistence.relational.repository.UserRepository;
+import edu.eci.dows.tdd.persistence.port.UserRepositoryPort;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -16,45 +14,47 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class UserServiceTest {
+
+    private User buildUser(String id, String name, String username, String password, String role) {
+        User user = new User();
+        user.setId(id);
+        user.setName(name);
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setRole(role);
+        return user;
+    }
+
     @Test
     public void testCreateUserReturnsSavedUser() {
-        UserRepository repository = mock(UserRepository.class);
+        UserRepositoryPort repository = mock(UserRepositoryPort.class);
         PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
         UserService service = new UserService(repository, passwordEncoder);
 
-        CreateUserRequestDTO request = new CreateUserRequestDTO("U001", "Mari", "mari", "1234", "USER");
-
-        UserEntity saved = new UserEntity();
-        saved.setId("U001");
-        saved.setName("Mari");
-        saved.setUsername("mari");
-        saved.setRole(UserRole.USER);
+        CreateUserRequestDTO request = new CreateUserRequestDTO("U001", "Mari", "mari", "1234", "USER", "mari@test.com", "PREMIUM", "2026-04-01T00:00:00Z");
+        User saved = buildUser("U001", "Mari", "mari", "encoded", "USER");
+        saved.setEmail("mari@test.com");
+        saved.setMembershipType("PREMIUM");
+        saved.setAddedAt("2026-04-01T00:00:00Z");
         when(repository.existsByUsername("mari")).thenReturn(false);
         when(passwordEncoder.encode("1234")).thenReturn("encoded");
-        when(repository.save(any(UserEntity.class))).thenReturn(saved);
+        when(repository.save(any(User.class))).thenReturn(saved);
 
         User result = service.createUser(request);
         assertEquals("U001", result.getId());
         assertEquals("Mari", result.getName());
         assertEquals("mari", result.getUsername());
         assertEquals("USER", result.getRole());
+        assertEquals("mari@test.com", result.getEmail());
     }
 
     @Test
     public void testGetAllUsers() {
-        UserRepository repository = mock(UserRepository.class);
+        UserRepositoryPort repository = mock(UserRepositoryPort.class);
         UserService service = new UserService(repository, mock(PasswordEncoder.class));
 
-        UserEntity u1 = new UserEntity();
-        u1.setId("U002");
-        u1.setName("Shawn");
-        u1.setUsername("shawn");
-        u1.setRole(UserRole.USER);
-        UserEntity u2 = new UserEntity();
-        u2.setId("U003");
-        u2.setName("Joji");
-        u2.setUsername("joji");
-        u2.setRole(UserRole.LIBRARIAN);
+        User u1 = buildUser("U002", "Shawn", "shawn", "secret", "USER");
+        User u2 = buildUser("U003", "Joji", "joji", "secret", "LIBRARIAN");
 
         when(repository.findAll()).thenReturn(List.of(u1, u2));
 
@@ -65,14 +65,10 @@ public class UserServiceTest {
 
     @Test
     public void testGetUserByIdWhenFound() {
-        UserRepository repository = mock(UserRepository.class);
+        UserRepositoryPort repository = mock(UserRepositoryPort.class);
         UserService service = new UserService(repository, mock(PasswordEncoder.class));
 
-        UserEntity entity = new UserEntity();
-        entity.setId("U001");
-        entity.setName("Mari");
-        entity.setUsername("mari");
-        entity.setRole(UserRole.USER);
+        User entity = buildUser("U001", "Mari", "mari", "secret", "USER");
         when(repository.findById("U001")).thenReturn(Optional.of(entity));
 
         Optional<User> result = service.getUserById("U001");
@@ -82,7 +78,7 @@ public class UserServiceTest {
 
     @Test
     public void testGetUserByIdWhenNotFoundReturnsEmpty() {
-        UserRepository repository = mock(UserRepository.class);
+        UserRepositoryPort repository = mock(UserRepositoryPort.class);
         UserService service = new UserService(repository, mock(PasswordEncoder.class));
 
         when(repository.findById("U404")).thenReturn(Optional.empty());
@@ -92,7 +88,7 @@ public class UserServiceTest {
 
     @Test
     public void testDeleteUserDelegatesToRepository() {
-        UserRepository repository = mock(UserRepository.class);
+        UserRepositoryPort repository = mock(UserRepositoryPort.class);
         UserService service = new UserService(repository, mock(PasswordEncoder.class));
 
         service.deleteUser("U001");

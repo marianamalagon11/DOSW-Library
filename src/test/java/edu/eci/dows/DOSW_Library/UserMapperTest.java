@@ -9,9 +9,19 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class UserMapperTest {
 
+    private User buildUser(String id, String name, String username, String password, String role) {
+        User user = new User();
+        user.setId(id);
+        user.setName(name);
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setRole(role);
+        return user;
+    }
+
     @Test
     public void testToDTOMapsAllFields() {
-        User user = new User("U1", "Maria", "maria", "USER");
+        User user = buildUser("U1", "Maria", "maria", "secret", "USER");
 
         UserDTO dto = UserMapper.toDTO(user);
 

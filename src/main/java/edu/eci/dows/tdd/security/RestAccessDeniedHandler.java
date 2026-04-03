@@ -26,7 +26,7 @@ public class RestAccessDeniedHandler implements AccessDeniedHandler {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
         ApiErrorResponse body = new ApiErrorResponse(
-                Instant.now(),
+                Instant.now().toString(),   // <-- CAMBIO AQUÍ
                 403,
                 "Forbidden",
                 "You don't have permission to access this resource",

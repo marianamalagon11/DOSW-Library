@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -16,4 +17,15 @@ public class Loan {
     LocalDate loanDate;
     String status;
     LocalDate returnDate;
+
+    //para la no relacional
+    private List<RecordEntry> record;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RecordEntry {
+        private String status;
+        private String date;
+    }
 }

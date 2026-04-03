@@ -12,9 +12,29 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class LoanValidatorTest {
 
+    private Book buildBook() {
+        Book book = new Book();
+        book.setId("B1");
+        book.setTitle("1984");
+        book.setAuthor("Orwell");
+        book.setTotalStock(10);
+        book.setAvailableStock(9);
+        return book;
+    }
+
+    private User buildUser() {
+        User user = new User();
+        user.setId("U1");
+        user.setName("Maria");
+        user.setUsername("maria");
+        user.setPassword("secret");
+        user.setRole("USER");
+        return user;
+    }
+
     @Test
     public void testIsValidWithCorrectLoanReturnsTrue() {
-        Loan loan = new Loan("L1", new Book("1984", "Orwell", "B1", 10, 9), new User("U1", "Maria", "maria", "USER"), LocalDate.now(), "ACTIVE", null);
+        Loan loan = new Loan("L1", buildBook(), buildUser(), LocalDate.now(), "ACTIVE", null, null);
         assertTrue(LoanValidator.isValid(loan));
     }
 
@@ -25,12 +45,12 @@ public class LoanValidatorTest {
 
     @Test
     public void testIsValidWithMissingRequiredFieldsReturnsFalse() {
-        User user = new User("U1", "Maria", "maria", "USER");
-        Book book = new Book("1984", "Orwell", "B1", 10, 9);
+        User user = buildUser();
+        Book book = buildBook();
 
-        assertFalse(LoanValidator.isValid(new Loan("L2", null, user, LocalDate.now(), "ACTIVE", null)));
-        assertFalse(LoanValidator.isValid(new Loan("L3", book, null, LocalDate.now(), "ACTIVE", null)));
-        assertFalse(LoanValidator.isValid(new Loan("L4", book, user, null, "ACTIVE", null)));
+        assertFalse(LoanValidator.isValid(new Loan("L2", null, user, LocalDate.now(), "ACTIVE", null, null)));
+        assertFalse(LoanValidator.isValid(new Loan("L3", book, null, LocalDate.now(), "ACTIVE", null, null)));
+        assertFalse(LoanValidator.isValid(new Loan("L4", book, user, null, "ACTIVE", null, null)));
     }
 }
 

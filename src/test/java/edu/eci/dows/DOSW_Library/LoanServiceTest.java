@@ -4,13 +4,9 @@ import edu.eci.dows.tdd.core.model.Book;
 import edu.eci.dows.tdd.core.model.Loan;
 import edu.eci.dows.tdd.core.model.User;
 import edu.eci.dows.tdd.core.service.LoanService;
-import edu.eci.dows.tdd.persistence.relational.entity.BookEntity;
-import edu.eci.dows.tdd.persistence.relational.entity.LoanEntity;
-import edu.eci.dows.tdd.persistence.relational.entity.UserEntity;
-import edu.eci.dows.tdd.persistence.relational.entity.enums.UserRole;
-import edu.eci.dows.tdd.persistence.relational.repository.BookRepository;
-import edu.eci.dows.tdd.persistence.relational.repository.LoanRepository;
-import edu.eci.dows.tdd.persistence.relational.repository.UserRepository;
+import edu.eci.dows.tdd.persistence.port.BookRepositoryPort;
+import edu.eci.dows.tdd.persistence.port.LoanRepositoryPort;
+import edu.eci.dows.tdd.persistence.port.UserRepositoryPort;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -21,38 +17,29 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class LoanServiceTest {
+
+    private Book buildBook(String id, String title, String author, int totalStock, int availableStock) {
+        return new Book(id, title, author, totalStock, availableStock, null, null, null, null, null, null, null);
+    }
+
+    private User buildUser(String id, String name, String username, String password, String role) {
+        return new User(id, name, username, password, role, null, null, null);
+    }
+
     @Test
     public void testAddLoanReturnsSavedLoan() {
-        LoanRepository loanRepository = mock(LoanRepository.class);
-        BookRepository bookRepository = mock(BookRepository.class);
-        UserRepository userRepository = mock(UserRepository.class);
+        LoanRepositoryPort loanRepository = mock(LoanRepositoryPort.class);
+        BookRepositoryPort bookRepository = mock(BookRepositoryPort.class);
+        UserRepositoryPort userRepository = mock(UserRepositoryPort.class);
         LoanService service = new LoanService(loanRepository, bookRepository, userRepository);
 
-        Book modelBook = new Book("CA1", "Cien anios", "Gabo", 4, 3);
-        User modelUser = new User("U005", "Luis", "luis", "USER");
-        Loan input = new Loan("L1", modelBook, modelUser, LocalDate.now(), "ACTIVE", null);
+        Book modelBook = buildBook("CA1", "Cien anios", "Gabo", 4, 3);
+        User modelUser = buildUser("U005", "Luis", "luis", "secret", "USER");
+        Loan input = new Loan("L1", modelBook, modelUser, LocalDate.now(), "ACTIVE", null, null);
 
-        BookEntity bookEntity = new BookEntity();
-        bookEntity.setId("CA1");
-        bookEntity.setTotalStock(4);
-        bookEntity.setAvailableStock(3);
-        UserEntity userEntity = new UserEntity();
-        userEntity.setId("U005");
-        userEntity.setName("Luis");
-        userEntity.setUsername("luis");
-        userEntity.setRole(UserRole.USER);
-
-        LoanEntity savedEntity = new LoanEntity();
-        savedEntity.setId("L1");
-        savedEntity.setBook(bookEntity);
-        savedEntity.setUser(userEntity);
-        savedEntity.setLoanDate(input.getLoanDate());
-        savedEntity.setStatus("ACTIVE");
-        savedEntity.setReturnDate(null);
-
-        when(bookRepository.findById("CA1")).thenReturn(Optional.of(bookEntity));
-        when(userRepository.findById("U005")).thenReturn(Optional.of(userEntity));
-        when(loanRepository.save(any(LoanEntity.class))).thenReturn(savedEntity);
+        when(bookRepository.findById("CA1")).thenReturn(Optional.of(modelBook));
+        when(userRepository.findById("U005")).thenReturn(Optional.of(modelUser));
+        when(loanRepository.save(any(Loan.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Loan result = service.addLoan(input);
         assertEquals("L1", result.getId());
@@ -62,28 +49,14 @@ public class LoanServiceTest {
 
     @Test
     public void testGetAllLoans() {
-        LoanRepository loanRepository = mock(LoanRepository.class);
-        LoanService service = new LoanService(loanRepository, mock(BookRepository.class), mock(UserRepository.class));
+        LoanRepositoryPort loanRepository = mock(LoanRepositoryPort.class);
+        LoanService service = new LoanService(loanRepository, mock(BookRepositoryPort.class), mock(UserRepositoryPort.class));
 
-        BookEntity book = new BookEntity();
-        book.setId("R1");
-        UserEntity user = new UserEntity();
-        user.setId("U1");
-        user.setName("Ana");
-        user.setUsername("ana");
-        user.setRole(UserRole.USER);
+        Book book = buildBook("R1", "Title", "Author", 2, 1);
+        User user = buildUser("U1", "Ana", "ana", "secret", "USER");
 
-        LoanEntity l1 = new LoanEntity();
-        l1.setId("L2");
-        l1.setBook(book);
-        l1.setUser(user);
-        l1.setLoanDate(LocalDate.now());
-
-        LoanEntity l2 = new LoanEntity();
-        l2.setId("L3");
-        l2.setBook(book);
-        l2.setUser(user);
-        l2.setLoanDate(LocalDate.now());
+        Loan l1 = new Loan("L2", book, user, LocalDate.now(), "ACTIVE", null, null);
+        Loan l2 = new Loan("L3", book, user, LocalDate.now(), "RETURNED", null, null);
 
         when(loanRepository.findAll()).thenReturn(List.of(l1, l2));
 
@@ -92,22 +65,12 @@ public class LoanServiceTest {
 
     @Test
     public void testGetLoanByIdWhenFound() {
-        LoanRepository loanRepository = mock(LoanRepository.class);
-        LoanService service = new LoanService(loanRepository, mock(BookRepository.class), mock(UserRepository.class));
+        LoanRepositoryPort loanRepository = mock(LoanRepositoryPort.class);
+        LoanService service = new LoanService(loanRepository, mock(BookRepositoryPort.class), mock(UserRepositoryPort.class));
 
-        BookEntity book = new BookEntity();
-        book.setId("R1");
-        UserEntity user = new UserEntity();
-        user.setId("U1");
-        user.setName("Ana");
-        user.setUsername("ana");
-        user.setRole(UserRole.USER);
-
-        LoanEntity entity = new LoanEntity();
-        entity.setId("L4");
-        entity.setBook(book);
-        entity.setUser(user);
-        entity.setLoanDate(LocalDate.now());
+        Book book = buildBook("R1", "Title", "Author", 2, 1);
+        User user = buildUser("U1", "Ana", "ana", "secret", "USER");
+        Loan entity = new Loan("L4", book, user, LocalDate.now(), "ACTIVE", null, null);
 
         when(loanRepository.findById("L4")).thenReturn(Optional.of(entity));
 
@@ -118,35 +81,29 @@ public class LoanServiceTest {
 
     @Test
     public void testUpdateLoanWhenExistsSavesEntity() {
-        LoanRepository loanRepository = mock(LoanRepository.class);
-        BookRepository bookRepository = mock(BookRepository.class);
-        UserRepository userRepository = mock(UserRepository.class);
+        LoanRepositoryPort loanRepository = mock(LoanRepositoryPort.class);
+        BookRepositoryPort bookRepository = mock(BookRepositoryPort.class);
+        UserRepositoryPort userRepository = mock(UserRepositoryPort.class);
         LoanService service = new LoanService(loanRepository, bookRepository, userRepository);
 
-        LoanEntity existing = new LoanEntity();
-        existing.setId("L6");
+        Loan existing = new Loan("L6", buildBook("B0", "Old", "Old", 1, 1), buildUser("U0", "Old", "old", "secret", "USER"), LocalDate.now(), "ACTIVE", null, null);
         when(loanRepository.findById("L6")).thenReturn(Optional.of(existing));
 
-        BookEntity bookEntity = new BookEntity();
-        bookEntity.setId("B1");
-        UserEntity userEntity = new UserEntity();
-        userEntity.setId("U1");
-        userEntity.setName("Ana");
-        userEntity.setUsername("ana");
-        userEntity.setRole(UserRole.USER);
-        when(bookRepository.findById("B1")).thenReturn(Optional.of(bookEntity));
-        when(userRepository.findById("U1")).thenReturn(Optional.of(userEntity));
+        Book book = buildBook("B1", "1984", "Orwell", 10, 9);
+        User user = buildUser("U1", "Ana", "ana", "secret", "USER");
+        when(bookRepository.findById("B1")).thenReturn(Optional.of(book));
+        when(userRepository.findById("U1")).thenReturn(Optional.of(user));
 
-        Loan updated = new Loan("other", new Book("B1", "1984", "Orwell", 10, 9), new User("U1", "Ana", "ana", "USER"), LocalDate.now(), "ACTIVE", null);
+        Loan updated = new Loan("other", book, user, LocalDate.now(), "ACTIVE", null, null);
         service.updateLoan("L6", updated);
 
-        verify(loanRepository).save(any(LoanEntity.class));
+        verify(loanRepository).save(any(Loan.class));
     }
 
     @Test
     public void testDeleteLoanDelegatesToRepository() {
-        LoanRepository loanRepository = mock(LoanRepository.class);
-        LoanService service = new LoanService(loanRepository, mock(BookRepository.class), mock(UserRepository.class));
+        LoanRepositoryPort loanRepository = mock(LoanRepositoryPort.class);
+        LoanService service = new LoanService(loanRepository, mock(BookRepositoryPort.class), mock(UserRepositoryPort.class));
 
         service.deleteLoan("L8");
 

@@ -28,6 +28,20 @@ public class BookControllerTest {
     private ObjectMapper objectMapper;
     private BookService bookService;
 
+    private BookDTO bookRequest(String id, String title, String author, int totalStock, int availableStock) {
+        return new BookDTO(id, title, author, totalStock, availableStock, null, null, null, null, null, null, null);
+    }
+
+    private Book bookModel(String id, String title, String author, int totalStock, int availableStock) {
+        Book book = new Book();
+        book.setId(id);
+        book.setTitle(title);
+        book.setAuthor(author);
+        book.setTotalStock(totalStock);
+        book.setAvailableStock(availableStock);
+        return book;
+    }
+
     @BeforeEach
     public void setUp() {
         bookService = mock(BookService.class);
@@ -40,9 +54,9 @@ public class BookControllerTest {
 
     @Test
     public void testAddBookReturnsCreated() throws Exception {
-        BookDTO request = new BookDTO("B1", "Clean Code", "Robert C. Martin", 8, 8);
+        BookDTO request = bookRequest("B1", "Clean Code", "Robert C. Martin", 8, 8);
         when(bookService.addBook(org.mockito.ArgumentMatchers.any(Book.class)))
-                .thenReturn(new Book("B1", "Clean Code", "Robert C. Martin", 8, 8));
+                .thenReturn(bookModel("B1", "Clean Code", "Robert C. Martin", 8, 8));
 
         mockMvc.perform(post("/books")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -57,8 +71,8 @@ public class BookControllerTest {
     @Test
     public void testGetAllBooksReturnsOkWithList() throws Exception {
         when(bookService.getAllBooks()).thenReturn(List.of(
-                new Book("B1", "Clean Code", "Robert C. Martin", 6, 5),
-                new Book("B2", "DDD", "Eric Evans", 4, 4)
+                bookModel("B1", "Clean Code", "Robert C. Martin", 6, 5),
+                bookModel("B2", "DDD", "Eric Evans", 4, 4)
         ));
 
         mockMvc.perform(get("/books"))
@@ -69,7 +83,7 @@ public class BookControllerTest {
 
     @Test
     public void testGetBookByIdReturnsOkWhenExists() throws Exception {
-        when(bookService.getBookById("B1")).thenReturn(Optional.of(new Book("B1", "Clean Code", "Robert C. Martin", 8, 7)));
+        when(bookService.getBookById("B1")).thenReturn(Optional.of(bookModel("B1", "Clean Code", "Robert C. Martin", 8, 7)));
 
         mockMvc.perform(get("/books/B1"))
                 .andExpect(status().isOk())

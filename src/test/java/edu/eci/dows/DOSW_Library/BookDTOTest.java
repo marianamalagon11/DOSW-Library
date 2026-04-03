@@ -7,9 +7,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class BookDTOTest {
 
+    private BookDTO newBookDTO(String id, String title, String author, int totalStock, int availableStock) {
+        return new BookDTO(id, title, author, totalStock, availableStock, null, null, null, null, null, null, null);
+    }
+
     @Test
     public void testConstructorGettersAndSetters() {
-        BookDTO dto = new BookDTO("B1", "Clean Code", "Robert C. Martin", 8, 6);
+        BookDTO dto = newBookDTO("B1", "Clean Code", "Robert C. Martin", 8, 6);
 
         assertEquals("B1", dto.getId());
         assertEquals("Clean Code", dto.getTitle());
@@ -32,9 +36,9 @@ public class BookDTOTest {
 
     @Test
     public void testEqualsHashCodeAndToString() {
-        BookDTO a = new BookDTO("B1", "Clean Code", "Robert C. Martin", 8, 6);
-        BookDTO b = new BookDTO("B1", "Clean Code", "Robert C. Martin", 8, 6);
-        BookDTO c = new BookDTO("B2", "DDD", "Eric Evans", 10, 10);
+        BookDTO a = newBookDTO("B1", "Clean Code", "Robert C. Martin", 8, 6);
+        BookDTO b = newBookDTO("B1", "Clean Code", "Robert C. Martin", 8, 6);
+        BookDTO c = newBookDTO("B2", "DDD", "Eric Evans", 10, 10);
 
         assertEquals(a, b);
         assertEquals(a.hashCode(), b.hashCode());

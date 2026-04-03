@@ -28,6 +28,16 @@ public class UserControllerTest {
     private ObjectMapper objectMapper;
     private UserService userService;
 
+    private User buildUser(String id, String name, String username, String password, String role) {
+        User user = new User();
+        user.setId(id);
+        user.setName(name);
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setRole(role);
+        return user;
+    }
+
     @BeforeEach
     public void setUp() {
         userService = mock(UserService.class);
@@ -40,9 +50,9 @@ public class UserControllerTest {
 
     @Test
     public void testAddUserReturnsCreated() throws Exception {
-        CreateUserRequestDTO request = new CreateUserRequestDTO("U1", "Maria", "maria", "1234", "USER");
+        CreateUserRequestDTO request = new CreateUserRequestDTO("U1", "Maria", "maria", "1234", "USER", null, null, null);
         when(userService.createUser(org.mockito.ArgumentMatchers.any(CreateUserRequestDTO.class)))
-                .thenReturn(new User("U1", "Maria", "maria", "USER"));
+                .thenReturn(buildUser("U1", "Maria", "maria", "encoded", "USER"));
 
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -57,8 +67,8 @@ public class UserControllerTest {
     @Test
     public void testGetAllUsersReturnsOkWithList() throws Exception {
         when(userService.getAllUsers()).thenReturn(List.of(
-                new User("U1", "Maria", "maria", "USER"),
-                new User("U2", "Ana", "ana", "LIBRARIAN")
+                buildUser("U1", "Maria", "maria", "secret", "USER"),
+                buildUser("U2", "Ana", "ana", "secret", "LIBRARIAN")
         ));
 
         mockMvc.perform(get("/users"))
@@ -69,7 +79,7 @@ public class UserControllerTest {
 
     @Test
     public void testGetUserByIdReturnsOkWhenExists() throws Exception {
-        when(userService.getUserById("U1")).thenReturn(Optional.of(new User("U1", "Maria", "maria", "USER")));
+        when(userService.getUserById("U1")).thenReturn(Optional.of(buildUser("U1", "Maria", "maria", "secret", "USER")));
 
         mockMvc.perform(get("/users/U1"))
                 .andExpect(status().isOk())

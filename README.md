@@ -47,6 +47,11 @@ Las flechas indican las relaciones entre clases: un Loan siempre está vinculado
 
 El modelo se encuentra en tercera forma normal ya que todas las tablas poseen clave primaria, no hay datos redundantes, y no existen dependencias transitivas. Las relaciones son de agregación, permitiendo la independencia de Book y User si se elimina un Loan.
 
+### Modelo no relacional
+![noRelational.png](images/noRelational.png)
+
+El diagrama muestra el modelo NoSQL en MongoDB: Book y User se manejan como documentos principales (colecciones books y users). En Book se embeben metadata y availability porque son atributos propios del libro y se consultan junto con él. Los préstamos (Loan) se guardan embebidos dentro de User como loans[], incluyendo su historial record[], para obtener los préstamos de un usuario en una sola consulta. Dentro de cada préstamo se guarda bookId como referencia al documento Book, evitando duplicar la información del libro y permitiendo que el catálogo se actualice independientemente.
+
 ---
 ## Pruebas
 

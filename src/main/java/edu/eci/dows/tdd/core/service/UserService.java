@@ -2,23 +2,21 @@ package edu.eci.dows.tdd.core.service;
 
 import edu.eci.dows.tdd.controller.dto.CreateUserRequestDTO;
 import edu.eci.dows.tdd.core.model.User;
-import edu.eci.dows.tdd.persistence.relational.entity.UserEntity;
-import edu.eci.dows.tdd.persistence.relational.entity.enums.UserRole;
-import edu.eci.dows.tdd.persistence.relational.repository.UserRepository;
-import edu.eci.dows.tdd.controller.mapper.UserMapper;
+import edu.eci.dows.tdd.persistence.port.UserRepositoryPort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserService {
 
-    private final UserRepository userRepository;
+    private final UserRepositoryPort userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepositoryPort userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -37,32 +35,33 @@ public class UserService {
             throw new IllegalArgumentException("Username already exists");
         }
 
-        UserEntity entity = new UserEntity();
-        entity.setId(request.getId());
-        entity.setName(request.getName());
-        entity.setUsername(request.getUsername());
-        entity.setPassword(passwordEncoder.encode(request.getPassword()));
-        entity.setRole(UserRole.valueOf(request.getRole()));
+        User u = new User(
+                request.getId(),
+                request.getName(),
+                request.getUsername(),
+                passwordEncoder.encode(request.getPassword()),
+                request.getRole(),
+                request.getEmail(),
+                request.getMembershipType(),
+                request.getAddedAt() != null ? request.getAddedAt() : Instant.now().toString()
+        );
 
-        UserEntity saved = userRepository.save(entity);
-        return UserMapper.toModel(saved);
+        return userRepository.save(u);
     }
 
     public List<User> getAllUsers() {
-        return userRepository.findAll().stream()
-                .map(UserMapper::toModel)
-                .toList();
+        return userRepository.findAll();
     }
 
     public Optional<User> getUserById(String id) {
-        return userRepository.findById(id).map(UserMapper::toModel);
+        return userRepository.findById(id);
     }
 
     public void deleteUser(String id) {
         userRepository.deleteById(id);
     }
 
-    public Optional<UserEntity> findEntityByUsername(String username) {
+    public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 }

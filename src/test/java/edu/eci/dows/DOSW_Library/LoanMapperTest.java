@@ -13,15 +13,36 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class LoanMapperTest {
 
+    private Book buildBook(String id, String title, String author, int totalStock, int availableStock) {
+        Book book = new Book();
+        book.setId(id);
+        book.setTitle(title);
+        book.setAuthor(author);
+        book.setTotalStock(totalStock);
+        book.setAvailableStock(availableStock);
+        return book;
+    }
+
+    private User buildUser(String id, String name, String username, String password, String role) {
+        User user = new User();
+        user.setId(id);
+        user.setName(name);
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setRole(role);
+        return user;
+    }
+
     @Test
     public void testToDTOMapsAllFields() {
         Loan loan = new Loan(
                 "L1",
-                new Book("B1", "1984", "Orwell", 10, 9),
-                new User("U1", "Maria", "maria", "USER"),
+                buildBook("B1", "1984", "Orwell", 10, 9),
+                buildUser("U1", "Maria", "maria", "secret", "USER"),
                 LocalDate.of(2026, 3, 1),
                 "ACTIVE",
-                LocalDate.of(2026, 3, 15)
+                LocalDate.of(2026, 3, 15),
+                null
         );
 
         LoanDTO dto = LoanMapper.toDTO(loan);
@@ -42,10 +63,11 @@ public class LoanMapperTest {
                 "U2",
                 LocalDate.of(2026, 4, 1),
                 "RETURNED",
-                LocalDate.of(2026, 4, 10)
+                LocalDate.of(2026, 4, 10),
+                null
         );
-        Book book = new Book("DDD", "Evans", "B2", 7, 6);
-        User user = new User("U2", "Ana", "ana", "USER");
+        Book book = buildBook("B2", "DDD", "Evans", 7, 6);
+        User user = buildUser("U2", "Ana", "ana", "secret", "USER");
 
         Loan loan = LoanMapper.toModel(dto, book, user);
 

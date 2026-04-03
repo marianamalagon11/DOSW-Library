@@ -2,6 +2,7 @@ package edu.eci.dows.tdd.security;
 
 import edu.eci.dows.tdd.persistence.relational.entity.UserEntity;
 import edu.eci.dows.tdd.persistence.relational.repository.UserRepository;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Profile("relational")
 public class AppUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;

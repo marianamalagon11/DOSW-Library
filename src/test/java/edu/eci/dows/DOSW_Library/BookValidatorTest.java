@@ -8,9 +8,19 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class BookValidatorTest {
 
+    private Book validBook() {
+        Book book = new Book();
+        book.setId("B1");
+        book.setTitle("El Quijote");
+        book.setAuthor("Cervantes");
+        book.setTotalStock(3);
+        book.setAvailableStock(2);
+        return book;
+    }
+
     @Test
     public void testIsValidWithCorrectBookReturnsTrue() {
-        assertTrue(BookValidator.isValid(new Book("El Quijote", "Cervantes", "B1", 3, 2)));
+        assertTrue(BookValidator.isValid(validBook()));
     }
 
     @Test
@@ -20,11 +30,24 @@ public class BookValidatorTest {
 
     @Test
     public void testIsValidWithMissingFieldsReturnsFalse() {
-        assertFalse(BookValidator.isValid(new Book("", "Cervantes", "B1", 3, 2)));
-        assertFalse(BookValidator.isValid(new Book("El Quijote", null, "B1", 3, 2)));
-        assertFalse(BookValidator.isValid(new Book("El Quijote", "Cervantes", "", 3, 2)));
-        assertFalse(BookValidator.isValid(new Book("El Quijote", "Cervantes", "B1", 0, 0)));
-        assertFalse(BookValidator.isValid(new Book("El Quijote", "Cervantes", "B1", 2, 3)));
+        Book missingTitle = validBook();
+        missingTitle.setTitle("");
+        Book missingAuthor = validBook();
+        missingAuthor.setAuthor(null);
+        Book missingId = validBook();
+        missingId.setId("");
+        Book invalidStock = validBook();
+        invalidStock.setTotalStock(0);
+        invalidStock.setAvailableStock(0);
+        Book invalidAvailability = validBook();
+        invalidAvailability.setTotalStock(2);
+        invalidAvailability.setAvailableStock(3);
+
+        assertFalse(BookValidator.isValid(missingTitle));
+        assertFalse(BookValidator.isValid(missingAuthor));
+        assertFalse(BookValidator.isValid(missingId));
+        assertFalse(BookValidator.isValid(invalidStock));
+        assertFalse(BookValidator.isValid(invalidAvailability));
     }
 }
 

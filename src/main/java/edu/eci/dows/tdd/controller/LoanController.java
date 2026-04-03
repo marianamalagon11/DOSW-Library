@@ -41,7 +41,7 @@ public class LoanController {
 
             if (authentication != null && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER"))) {
                 String username = authentication.getName();
-                String currentUserId = userService.findEntityByUsername(username).orElseThrow().getId();
+                String currentUserId = userService.findByUsername(username).orElseThrow().getId();
                 if (!currentUserId.equals(request.getUserId())) {
                     return new ResponseEntity<>(HttpStatus.FORBIDDEN);
                 }
@@ -68,7 +68,7 @@ public class LoanController {
     @GetMapping("/me")
     public ResponseEntity<List<LoanDTO>> getMyLoans(Authentication authentication) {
         String username = authentication.getName();
-        String userId = userService.findEntityByUsername(username).orElseThrow().getId();
+        String userId = userService.findByUsername(username).orElseThrow().getId();
         List<LoanDTO> loans = loanService.getLoansByUserId(userId).stream()
                 .map(LoanMapper::toDTO)
                 .toList();
@@ -126,7 +126,7 @@ public class LoanController {
         }
 
         String username = authentication.getName();
-        String currentUserId = userService.findEntityByUsername(username).orElseThrow().getId();
+        String currentUserId = userService.findByUsername(username).orElseThrow().getId();
 
         boolean isLibrarian = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_LIBRARIAN"));
         if (!isLibrarian && !loanService.loanBelongsToUser(id, currentUserId)) {
@@ -141,7 +141,8 @@ public class LoanController {
                 dto.getUserId(),
                 dto.getLoanDate(),
                 "DEVUELTO",
-                LocalDate.now()
+                LocalDate.now(),
+                dto.getRecord()
         );
 
         Book book = bookService.getBookById(returned.getBookId()).orElseThrow();

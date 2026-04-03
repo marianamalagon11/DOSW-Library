@@ -11,5 +11,11 @@ public class User {
     String id;
     String name;
     String username;
+    String password;
     String role;
+
+    // para la no relacional
+    private String email;
+    private String membershipType;
+    private String addedAt;
 }

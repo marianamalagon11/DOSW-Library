@@ -8,9 +8,19 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class UserValidatorTest {
 
+    private User validUser() {
+        User user = new User();
+        user.setId("U1");
+        user.setName("Maria");
+        user.setUsername("maria");
+        user.setPassword("secret");
+        user.setRole("USER");
+        return user;
+    }
+
     @Test
     public void testIsValidWithCorrectUserReturnsTrue() {
-        assertTrue(UserValidator.isValid(new User("U1", "Maria", "maria", "USER")));
+        assertTrue(UserValidator.isValid(validUser()));
     }
 
     @Test
@@ -20,10 +30,19 @@ public class UserValidatorTest {
 
     @Test
     public void testIsValidWithMissingFieldsReturnsFalse() {
-        assertFalse(UserValidator.isValid(new User("", "Maria", "maria", "USER")));
-        assertFalse(UserValidator.isValid(new User("U1", "", "maria", "USER")));
-        assertFalse(UserValidator.isValid(new User("U1", "Maria", "", "USER")));
-        assertFalse(UserValidator.isValid(new User("U1", "Maria", "maria", "")));
+        User missingId = validUser();
+        missingId.setId("");
+        User missingName = validUser();
+        missingName.setName("");
+        User missingUsername = validUser();
+        missingUsername.setUsername("");
+        User missingRole = validUser();
+        missingRole.setRole("");
+
+        assertFalse(UserValidator.isValid(missingId));
+        assertFalse(UserValidator.isValid(missingName));
+        assertFalse(UserValidator.isValid(missingUsername));
+        assertFalse(UserValidator.isValid(missingRole));
     }
 }
 

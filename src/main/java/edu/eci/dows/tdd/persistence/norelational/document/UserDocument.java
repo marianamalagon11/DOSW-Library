@@ -1,9 +1,11 @@
-package edu.eci.dows.tdd.persistence.nonrelational.document;
+package edu.eci.dows.tdd.persistence.norelational.document;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.List;
 
 @Document(collection = "users")
 @Data
@@ -21,4 +23,6 @@ public class UserDocument {
     private String email;
     private String membershipType;
     private String addedAt;
+
+    private List<LoanEmbedded> loans;
 }

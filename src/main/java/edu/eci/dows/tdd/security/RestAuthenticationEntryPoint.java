@@ -26,7 +26,7 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
         ApiErrorResponse body = new ApiErrorResponse(
-                Instant.now(),
+                Instant.now().toString(),  // <-- CAMBIO AQUÍ
                 401,
                 "Unauthorized",
                 "Missing or invalid token",

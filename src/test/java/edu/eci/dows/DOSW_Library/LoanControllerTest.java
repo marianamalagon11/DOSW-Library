@@ -34,6 +34,30 @@ public class LoanControllerTest {
     private BookService bookService;
     private UserService userService;
 
+    private Book buildBook(String id, String title, String author, int totalStock, int availableStock) {
+        Book book = new Book();
+        book.setId(id);
+        book.setTitle(title);
+        book.setAuthor(author);
+        book.setTotalStock(totalStock);
+        book.setAvailableStock(availableStock);
+        return book;
+    }
+
+    private User buildUser(String id, String name, String username, String password, String role) {
+        User user = new User();
+        user.setId(id);
+        user.setName(name);
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setRole(role);
+        return user;
+    }
+
+    private LoanDTO loanRequest(String id, String bookId, String userId, LocalDate loanDate, String status, LocalDate returnDate) {
+        return new LoanDTO(id, bookId, userId, loanDate, status, returnDate, null);
+    }
+
     @BeforeEach
     public void setUp() {
         loanService = mock(LoanService.class);
@@ -46,15 +70,15 @@ public class LoanControllerTest {
 
     @Test
     public void testAddLoanReturnsCreated() throws Exception {
-        Book book = new Book("B1", "1984", "Orwell", 10, 9);
-        User user = new User("U1", "Maria", "maria", "USER");
+        Book book = buildBook("B1", "1984", "Orwell", 10, 9);
+        User user = buildUser("U1", "Maria", "maria", "secret", "USER");
         when(bookService.getBookById("B1")).thenReturn(Optional.of(book));
         when(userService.getUserById("U1")).thenReturn(Optional.of(user));
         when(loanService.addLoan(org.mockito.ArgumentMatchers.any(Loan.class))).thenReturn(
-                new Loan("L1", book, user, LocalDate.of(2026, 3, 1), "ACTIVE", null)
+                new Loan("L1", book, user, LocalDate.of(2026, 3, 1), "ACTIVE", null, null)
         );
 
-        LoanDTO request = new LoanDTO("L1", "B1", "U1", LocalDate.of(2026, 3, 1), "ACTIVE", null);
+        LoanDTO request = loanRequest("L1", "B1", "U1", LocalDate.of(2026, 3, 1), "ACTIVE", null);
 
         mockMvc.perform(post("/loans")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -69,19 +93,21 @@ public class LoanControllerTest {
     public void testGetAllLoansReturnsOkWithList() throws Exception {
         Loan loan1 = new Loan(
                 "L2",
-                new Book("B1", "1984", "Orwell", 10, 9),
-                new User("U1", "Maria", "maria", "USER"),
+                buildBook("B1", "1984", "Orwell", 10, 9),
+                buildUser("U1", "Maria", "maria", "secret", "USER"),
                 LocalDate.of(2026, 3, 1),
                 "ACTIVE",
+                null,
                 null
         );
         Loan loan2 = new Loan(
                 "L3",
-                new Book("B2", "DDD", "Evans", 8, 8),
-                new User("U2", "Ana", "ana", "USER"),
+                buildBook("B2", "DDD", "Evans", 8, 8),
+                buildUser("U2", "Ana", "ana", "secret", "USER"),
                 LocalDate.of(2026, 3, 2),
                 "RETURNED",
-                LocalDate.of(2026, 3, 10)
+                LocalDate.of(2026, 3, 10),
+                null
         );
         when(loanService.getAllLoans()).thenReturn(List.of(loan1, loan2));
 

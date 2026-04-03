@@ -2,9 +2,8 @@ package edu.eci.dows.DOSW_Library;
 
 import edu.eci.dows.tdd.core.model.Book;
 import edu.eci.dows.tdd.core.service.BookService;
-import edu.eci.dows.tdd.persistence.relational.entity.BookEntity;
-import edu.eci.dows.tdd.persistence.relational.repository.BookRepository;
-import edu.eci.dows.tdd.persistence.relational.repository.LoanRepository;
+import edu.eci.dows.tdd.persistence.port.BookRepositoryPort;
+import edu.eci.dows.tdd.persistence.port.LoanRepositoryPort;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -14,21 +13,25 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class BookServiceTest {
+
+    private Book buildBook(String id, String title, String author, int totalStock, int availableStock) {
+        Book book = new Book();
+        book.setId(id);
+        book.setTitle(title);
+        book.setAuthor(author);
+        book.setTotalStock(totalStock);
+        book.setAvailableStock(availableStock);
+        return book;
+    }
+
     @Test
     public void testAddBookMapsAndReturnsSavedModel() {
-        BookRepository repository = mock(BookRepository.class);
-        LoanRepository loanRepository = mock(LoanRepository.class);
+        BookRepositoryPort repository = mock(BookRepositoryPort.class);
+        LoanRepositoryPort loanRepository = mock(LoanRepositoryPort.class);
         BookService service = new BookService(repository, loanRepository);
 
-        Book input = new Book("El Quijote", "Cervantes", "1", 3, 2);
-        BookEntity saved = new BookEntity();
-        saved.setId("1");
-        saved.setTitle("El Quijote");
-        saved.setAuthor("Cervantes");
-        saved.setTotalStock(3);
-        saved.setAvailableStock(2);
-
-        when(repository.save(any(BookEntity.class))).thenReturn(saved);
+        Book input = buildBook("1", "El Quijote", "Cervantes", 3, 2);
+        when(repository.save(any(Book.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Book result = service.addBook(input);
 
@@ -39,23 +42,12 @@ public class BookServiceTest {
 
     @Test
     public void testGetAllBooksMapsFromRepository() {
-        BookRepository repository = mock(BookRepository.class);
-        LoanRepository loanRepository = mock(LoanRepository.class);
+        BookRepositoryPort repository = mock(BookRepositoryPort.class);
+        LoanRepositoryPort loanRepository = mock(LoanRepositoryPort.class);
         BookService service = new BookService(repository, loanRepository);
 
-        BookEntity b1 = new BookEntity();
-        b1.setId("1");
-        b1.setTitle("A");
-        b1.setAuthor("AA");
-        b1.setTotalStock(2);
-        b1.setAvailableStock(1);
-
-        BookEntity b2 = new BookEntity();
-        b2.setId("2");
-        b2.setTitle("B");
-        b2.setAuthor("BB");
-        b2.setTotalStock(3);
-        b2.setAvailableStock(3);
+        Book b1 = buildBook("1", "A", "AA", 2, 1);
+        Book b2 = buildBook("2", "B", "BB", 3, 3);
 
         when(repository.findAll()).thenReturn(List.of(b1, b2));
 
@@ -66,16 +58,11 @@ public class BookServiceTest {
 
     @Test
     public void testGetBookByIdWhenFound() {
-        BookRepository repository = mock(BookRepository.class);
-        LoanRepository loanRepository = mock(LoanRepository.class);
+        BookRepositoryPort repository = mock(BookRepositoryPort.class);
+        LoanRepositoryPort loanRepository = mock(LoanRepositoryPort.class);
         BookService service = new BookService(repository, loanRepository);
 
-        BookEntity entity = new BookEntity();
-        entity.setId("1");
-        entity.setTitle("El Quijote");
-        entity.setAuthor("Cervantes");
-        entity.setTotalStock(3);
-        entity.setAvailableStock(2);
+        Book entity = buildBook("1", "El Quijote", "Cervantes", 3, 2);
 
         when(repository.findById("1")).thenReturn(Optional.of(entity));
 
@@ -86,14 +73,11 @@ public class BookServiceTest {
 
     @Test
     public void testUpdateBookStockWhenBookExists() {
-        BookRepository repository = mock(BookRepository.class);
-        LoanRepository loanRepository = mock(LoanRepository.class);
+        BookRepositoryPort repository = mock(BookRepositoryPort.class);
+        LoanRepositoryPort loanRepository = mock(LoanRepositoryPort.class);
         BookService service = new BookService(repository, loanRepository);
 
-        BookEntity entity = new BookEntity();
-        entity.setId("1");
-        entity.setTotalStock(3);
-        entity.setAvailableStock(2);
+        Book entity = buildBook("1", "El Quijote", "Cervantes", 3, 2);
 
         when(repository.findById("1")).thenReturn(Optional.of(entity));
 
@@ -106,8 +90,8 @@ public class BookServiceTest {
 
     @Test
     public void testIsBookAvailableWhenNotFoundReturnsFalse() {
-        BookRepository repository = mock(BookRepository.class);
-        LoanRepository loanRepository = mock(LoanRepository.class);
+        BookRepositoryPort repository = mock(BookRepositoryPort.class);
+        LoanRepositoryPort loanRepository = mock(LoanRepositoryPort.class);
         BookService service = new BookService(repository, loanRepository);
 
         when(repository.findById("missing")).thenReturn(Optional.empty());
@@ -117,8 +101,8 @@ public class BookServiceTest {
 
     @Test
     public void testDeleteBookDelegatesToRepository() {
-        BookRepository repository = mock(BookRepository.class);
-        LoanRepository loanRepository = mock(LoanRepository.class);
+        BookRepositoryPort repository = mock(BookRepositoryPort.class);
+        LoanRepositoryPort loanRepository = mock(LoanRepositoryPort.class);
         BookService service = new BookService(repository, loanRepository);
 
         service.deleteBook("1");
