@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy JAR app to Azure Web App - library-marianamalagon
+name: Build and deploy JAR app to Azure Web App - mariana-library
 
 on:
   push:
@@ -49,15 +49,15 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_643EAC1B199948D69A3AAB81A5C1F2A6 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_FFF04DBE2CE2493ABA627B0D971D083B }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_826CA9B9B09C47FDBC3C50AE60F87004 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_8E72B8F09C574EC9828B49DBBA6A681C }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_B2250EE8C128454B8121C2B223ED9D2E }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_12EF6DD736C24F8C8169583D7D37C860 }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'library-marianamalagon'
+          app-name: 'mariana-library'
           slot-name: 'Production'
           package: '*.jar'
           
