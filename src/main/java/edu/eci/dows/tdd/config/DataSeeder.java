@@ -4,9 +4,11 @@ import edu.eci.dows.tdd.persistence.relational.entity.UserEntity;
 import edu.eci.dows.tdd.persistence.relational.entity.enums.UserRole;
 import edu.eci.dows.tdd.persistence.relational.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+@Profile("relational")
 @Component
 public class DataSeeder implements CommandLineRunner {
 
