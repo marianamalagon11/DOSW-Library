@@ -202,13 +202,5 @@ En Mongo tambien se tuvo que habilitar otra ip:
 - Se verificó el estado del despliegue en:
     - **GitHub → Actions** (logs del workflow de deploy)
     - **Azure → Log stream** (logs de ejecución de la aplicación)
-- Se probó la aplicación accediendo al dominio y realizando pruebas funcionales.
 
-### 6) Video
-Se grabó un video mostrando:
-- Workflow de deploy en GitHub Actions en estado exitoso (verde)
-- Aplicación desplegada en Azure funcionando en la URL del App Service
-- Pruebas funcionales realizadas contra la aplicación desplegada
 
-**URL App Service:** `https://<app-name>.azurewebsites.net`  
-**Video:** `<link del video>`
